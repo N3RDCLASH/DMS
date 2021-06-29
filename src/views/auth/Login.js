@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import { useTheme } from "@material-ui/core/styles";
@@ -16,11 +16,15 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 // @material-ui/icons components
 import Email from "@material-ui/icons/Email";
 import Lock from "@material-ui/icons/Lock";
-import Auth from 'auth'
+import ClipLoader from "react-spinners/ClipLoader";
+import { useDispatch, useSelector } from "react-redux";
+
+
 
 // core components
 import componentStyles from "assets/theme/views/auth/login.js";
-
+import { login } from "actions/userActions";
+import { css } from "@emotion/react";
 const useStyles = makeStyles(componentStyles);
 
 
@@ -31,8 +35,24 @@ function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const dispatch = useDispatch()
+  const userLogin = useSelector((state) => state.userLogin);
+  const { loading, error, userInfo } = userLogin;
+
+  const override = css`
+  display: block;
+  margin: 0 auto;
+  border-color: #5e72e4;
+`;
+
+  useEffect(() => {
+    return () => {
+      redirect
+    }
+  }, [loading, error, userInfo])
+
   const submitForm = () => {
-    Auth.login(email, password);
+    dispatch(login(email, password))
   }
   return (
     <>
@@ -40,16 +60,6 @@ function Login() {
         <Card classes={{ root: classes.cardRoot }}>
           <CardHeader
             className={classes.cardHeader}
-            title={
-              <Box
-                fontSize="80%"
-                fontWeight="400"
-                component="small"
-                color={theme.palette.gray[600]}
-              >
-                Sign in with
-              </Box>
-            }
             titleTypographyProps={{
               component: Box,
               textAlign: "center",
@@ -57,51 +67,9 @@ function Login() {
               marginTop: ".5rem!important",
               fontSize: "1rem!important",
             }}
-            subheader={
-              <Box textAlign="center">
-                <Box
-                  component={Button}
-                  variant="contained"
-                  marginRight=".5rem!important"
-                  classes={{ root: classes.buttonRoot }}
-                >
-                  <Box component="span" marginRight="4px">
-                    <Box
-                      alt="..."
-                      component="img"
-                      width="20px"
-                      className={classes.buttonImg}
-                      src={
-                        require("assets/img/icons/common/github.svg").default
-                      }
-                    ></Box>
-                  </Box>
-                  <Box component="span" marginLeft=".75rem">
-                    Github
-                  </Box>
-                </Box>
-                <Button
-                  variant="contained"
-                  classes={{ root: classes.buttonRoot }}
-                >
-                  <Box component="span" marginRight="4px">
-                    <Box
-                      alt="..."
-                      component="img"
-                      width="20px"
-                      className={classes.buttonImg}
-                      src={
-                        require("assets/img/icons/common/google.svg").default
-                      }
-                    ></Box>
-                  </Box>
-                  <Box component="span" marginLeft=".75rem">
-                    Google
-                  </Box>
-                </Button>
-              </Box>
-            }
-          ></CardHeader>
+
+
+          />
           <CardContent classes={{ root: classes.cardContent }}>
             <Box
               color={theme.palette.gray[600]}
@@ -114,59 +82,60 @@ function Login() {
                 Or sign in with credentials
               </Box>
             </Box>
-            <form action="" >
-              <FormControl
-                variant="filled"
-                component={Box}
-                width="100%"
-                marginBottom="1rem!important"
-              >
-                <FilledInput
-                  autoComplete="off"
-                  type="email"
-                  placeholder="Email"
-                  onInput={({ target: { value } }) => setEmail(value)}
-                  startAdornment={
-                    <InputAdornment position="start">
-                      <Email />
-                    </InputAdornment>
-                  }
+            {loading ? <ClipLoader loading={loading} css={override} size={60} /> :
+              <form action="" >
+                <FormControl
+                  variant="filled"
+                  component={Box}
+                  width="100%"
+                  marginBottom="1rem!important"
+                >
+                  <FilledInput
+                    autoComplete="off"
+                    type="email"
+                    placeholder="Email"
+                    onInput={({ target: { value } }) => setEmail(value)}
+                    startAdornment={
+                      <InputAdornment position="start">
+                        <Email />
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+                <FormControl
+                  variant="filled"
+                  component={Box}
+                  width="100%"
+                  marginBottom="1rem!important"
+                >
+                  <FilledInput
+                    autoComplete="off"
+                    type="password"
+                    placeholder="Password"
+                    onInput={({ target: { value } }) => setPassword(value)}
+                    startAdornment={
+                      <InputAdornment position="start">
+                        <Lock />
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+                <FormControlLabel
+                  value="end"
+                  control={<Checkbox color="primary" />}
+                  label="Remeber me"
+                  labelPlacement="end"
+                  classes={{
+                    root: classes.formControlLabelRoot,
+                    label: classes.formControlLabelLabel,
+                  }}
                 />
-              </FormControl>
-              <FormControl
-                variant="filled"
-                component={Box}
-                width="100%"
-                marginBottom="1rem!important"
-              >
-                <FilledInput
-                  autoComplete="off"
-                  type="password"
-                  placeholder="Password"
-                  onInput={({ target: { value } }) => setPassword(value)}
-                  startAdornment={
-                    <InputAdornment position="start">
-                      <Lock />
-                    </InputAdornment>
-                  }
-                />
-              </FormControl>
-              <FormControlLabel
-                value="end"
-                control={<Checkbox color="primary" />}
-                label="Remeber me"
-                labelPlacement="end"
-                classes={{
-                  root: classes.formControlLabelRoot,
-                  label: classes.formControlLabelLabel,
-                }}
-              />
-              <Box textAlign="center" marginTop="1.5rem" marginBottom="1.5rem">
-                <Button color="primary" variant="contained" onClick={submitForm}>
-                  Sign in
-                </Button>
-              </Box>
-            </form>
+                <Box textAlign="center" marginTop="1.5rem" marginBottom="1.5rem">
+                  <Button color="primary" variant="contained" onClick={submitForm}>
+                    Sign in
+                  </Button>
+                </Box>
+              </form>}
           </CardContent>
         </Card>
         <Grid container component={Box} marginTop="1rem">
