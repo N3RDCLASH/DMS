@@ -19,11 +19,11 @@ const AuthHeader = () => {
       <Box
         className={classes.header}
         position="relative"
-        paddingTop="8rem"
-        paddingBottom="8rem"
+        paddingTop="5rem"
+        paddingBottom="5rem"
       >
         <Container maxWidth="xl">
-          <Box marginBottom="6rem" textAlign="center">
+          <Box marginBottom="3rem" textAlign="center">
             <Box
               component={Grid}
               container
@@ -31,15 +31,13 @@ const AuthHeader = () => {
               color={theme.palette.white.main}
             >
               <Grid item lg={5} md={6} xs={12}>
-                <h1>Welcome!</h1>
+                <h1>Welkom!</h1>
                 <Box
                   component="p"
                   color={theme.palette.gray[400]}
                   lineHeight="1.7"
                   fontSize="1rem"
-                >
-                  Use these awesome forms to login or create new account in your
-                  project for free.
+                >Bij het document management systeem van Qualogy
                 </Box>
               </Grid>
             </Box>

@@ -25,6 +25,9 @@ import { useDispatch, useSelector } from "react-redux";
 import componentStyles from "assets/theme/views/auth/login.js";
 import { login } from "actions/userActions";
 import { css } from "@emotion/react";
+import { useHistory } from "react-router-dom";
+// import { useIsAuthtenticated } from "hooks/useIsAuthenticated";
+// import { Redirect } from "react-router-dom";
 const useStyles = makeStyles(componentStyles);
 
 
@@ -37,6 +40,7 @@ function Login() {
 
   const dispatch = useDispatch()
   const userLogin = useSelector((state) => state.userLogin);
+  const history = useHistory()
   const { loading, error, userInfo } = userLogin;
 
   const override = css`
@@ -47,7 +51,7 @@ function Login() {
 
   useEffect(() => {
     return () => {
-      redirect
+
     }
   }, [loading, error, userInfo])
 
@@ -67,20 +71,14 @@ function Login() {
               marginTop: ".5rem!important",
               fontSize: "1rem!important",
             }}
-
-
+            title={<h1>Login</h1>}
           />
           <CardContent classes={{ root: classes.cardContent }}>
-            <Box
-              color={theme.palette.gray[600]}
-              textAlign="center"
-              marginBottom="1rem"
-              marginTop=".5rem"
-              fontSize="1rem"
-            >
-              <Box fontSize="80%" fontWeight="400" component="small">
-                Or sign in with credentials
-              </Box>
+            <Box>
+              <img style={
+                { display: "block", margin: "0 auto" }
+
+              } width={100} height="100" src={require("assets/img/icons/qualogy.svg").default} alt="" />
             </Box>
             {loading ? <ClipLoader loading={loading} css={override} size={60} /> :
               <form action="" >

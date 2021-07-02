@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+import { BrowserRouter, Route, Switch, } from "react-router-dom";
 
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
@@ -13,6 +13,11 @@ import "assets/scss/argon-dashboard-react.scss";
 import AdminLayout from "layouts/Admin.js";
 import AuthLayout from "layouts/Auth.js";
 
+import { ProtectedContainer } from 'components/ProtectedContainer/ProtectedContainer'
+
+
+
+
 const App = () => {
 
     return (
@@ -22,9 +27,10 @@ const App = () => {
                 <CssBaseline />
                 <BrowserRouter>
                     <Switch>
-                        <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
-                        <Route path="/auth" render={(props) => <AuthLayout {...props} />} />
-                        <Redirect from="/" to="/auth/login" />
+                        <ProtectedContainer>
+                            <Route path="/auth" render={(props) => <AuthLayout {...props} />} />
+                            <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
+                        </ProtectedContainer>
                     </Switch>
                 </BrowserRouter>
             </ThemeProvider>

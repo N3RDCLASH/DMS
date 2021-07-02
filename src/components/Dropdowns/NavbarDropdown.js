@@ -18,6 +18,8 @@ import Settings from "@material-ui/icons/Settings";
 
 // core components
 import componentStyles from "assets/theme/components/navbar-dropdown.js";
+import { useDispatch } from "react-redux";
+import { logout } from "actions/userActions";
 
 const useStyles = makeStyles(componentStyles);
 
@@ -34,7 +36,7 @@ export default function NavbarDropdown() {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
-
+  const dispatch = useDispatch()
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
@@ -114,7 +116,10 @@ export default function NavbarDropdown() {
         display="flex!important"
         alignItems="center!important"
         component={MenuItem}
-        onClick={handleMenuClose}
+        onClick={() => {
+          dispatch(logout())
+          console.log('log out')
+        }}
       >
         <Box
           component={DirectionsRun}
@@ -124,7 +129,7 @@ export default function NavbarDropdown() {
         />
         <span>Logout</span>
       </Box>
-    </Menu>
+    </Menu >
   );
 
   return (

@@ -125,7 +125,10 @@ export default function Sidebar({ routes, logo, dropdown, input }) {
     });
   };
   let logoImage = (
-    <img alt={logo.imgAlt} className={classes.logoClasses} src={logo.imgSrc} />
+    <img style={
+      { display: "block", margin: "0 auto" }
+
+    } width={100} height="100" src={require("assets/img/icons/qualogy.svg").default} alt="" />
   );
   let logoObject =
     logo && logo.innerLink ? (

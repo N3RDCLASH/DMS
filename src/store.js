@@ -14,8 +14,11 @@ const getUserInfoFromStorge = () => JSON.parse(localStorage.getItem("DMS_USER"))
 
 
 const initialState = {
-    userInfo: {
-        ...getUserInfoFromStorge()
+    userLogin: {
+        userInfo: {
+            ...getUserInfoFromStorge()
+
+        }
     }
 }
 //  Thunk: delay dispatch actions 
