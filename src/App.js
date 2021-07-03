@@ -29,7 +29,7 @@ const App = () => {
                     <Switch>
                         <ProtectedContainer>
                             <Route path="/auth" render={(props) => <AuthLayout {...props} />} />
-                            <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
+                            <Route path="/app" render={(props) => <AdminLayout {...props} />} />
                         </ProtectedContainer>
                     </Switch>
                 </BrowserRouter>

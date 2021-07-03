@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocation, Route, Switch, Redirect } from "react-router-dom";
+import { useLocation, Route, Switch, } from "react-router-dom";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
@@ -35,7 +35,7 @@ const Admin = () => {
 
   const getRoutes = (routes) => {
     return routes.map((prop, key) => {
-      if (prop.layout === "/admin") {
+      if (prop.layout === "/app" && prop.sidebar == true) {
         return (
           <Route
             path={prop.layout + prop.path}
@@ -62,7 +62,7 @@ const Admin = () => {
     <>
       <>
         <Sidebar
-          routes={routes}
+          routes={routes.filter(x => x.sidebar == true)}
           logo={{
             innerLink: "/admin/index",
             imgSrc: require("../assets/img/brand/argon-react.png").default,
@@ -95,7 +95,7 @@ const Admin = () => {
           <AdminNavbar brandText={getBrandText(location.pathname)} />
           <Switch>
             {getRoutes(routes)}
-            <Redirect from="*" to="/admin/index" />
+            {/* <Redirect from="*" to="/app/home" /> */}
           </Switch>
           <Container
             maxWidth={false}

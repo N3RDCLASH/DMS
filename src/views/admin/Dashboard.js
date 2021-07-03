@@ -55,7 +55,7 @@ function Dashboard() {
   };
   return (
     <>
-      <Header />
+      <Header classes={classes.bgGradientError} />
       {/* Page content */}
       <Container
         maxWidth={false}

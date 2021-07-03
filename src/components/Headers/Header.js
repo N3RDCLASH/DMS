@@ -20,12 +20,12 @@ import componentStyles from "assets/theme/components/header.js";
 
 const useStyles = makeStyles(componentStyles);
 
-const Header = () => {
+const Header = (props) => {
   const classes = useStyles();
   const theme = useTheme();
   return (
     <>
-      <div className={classes.header}>
+      <div className={classes.header +" "+props.classes}>
         <Container
           maxWidth={false}
           component={Box}
