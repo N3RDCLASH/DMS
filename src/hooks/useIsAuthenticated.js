@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 
@@ -6,28 +6,32 @@ import { useHistory } from "react-router-dom";
 export const useIsAuthenticated = () => {
 
 
-    const [isAuthenticated, setIsAuthenticated] = useState(null)
     const user = useSelector(state => state.userLogin.userInfo);
     const history = useHistory();
 
     useEffect(() => {
-        setIsAuthenticated(user !== undefined)
-        console.log(isAuthenticated)
-        console.log(user)
-    }, [user])
+        const isAuthenticated = Object.keys(Object).length == 0 ? true : false
 
-    useEffect(() => {
         if (!isAuthenticated) {
-            if (history.location.pathname == "/auth/login")
+            if (history.location.pathname == "/auth/login") {
+                console.log('case1', user, isAuthenticated)
                 return
+            }
+            console.log('case2', user, isAuthenticated)
             return history.push("/auth/login")
         }
 
-        if (isAuthenticated && history.location.pathname == "/auth/login") {
-            console.log(isAuthenticated, user)
-            return history.push('/admin/index')
+        if (isAuthenticated) {
+            if (history.location.pathname == "/auth/login") {
+                console.log('case3', user, isAuthenticated)
+                return history.push('/app/home')
+            }
+
+            console.log('case4', user, isAuthenticated)
+            return
         }
-    }, [history.location, isAuthenticated])
+
+    }, [history.location], user)
 
 
 }
