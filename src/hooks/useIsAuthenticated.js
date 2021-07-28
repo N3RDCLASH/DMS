@@ -6,11 +6,12 @@ import { useHistory } from "react-router-dom";
 export const useIsAuthenticated = () => {
 
 
-    const user = useSelector(state => state.userLogin.userInfo);
+    const isAuthenticated = useSelector(state => state.userLogin.userInfo !== undefined ? state.userLogin.userInfo : null)
     const history = useHistory();
 
     useEffect(() => {
-        const isAuthenticated = Object.keys(Object).length == 0 ? true : false
+
+        console.log(isAuthenticated)
 
         if (!isAuthenticated) {
             if (history.location.pathname == "/auth/login")
@@ -20,7 +21,6 @@ export const useIsAuthenticated = () => {
         }
 
         if (isAuthenticated) {
-
             if (history.location.pathname == "/")
                 return history.push('/app/home')
 
@@ -29,7 +29,7 @@ export const useIsAuthenticated = () => {
             return
         }
 
-    }, [history.location], user)
+    }, [history.location, isAuthenticated])
 
 
 }
