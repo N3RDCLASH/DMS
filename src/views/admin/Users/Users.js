@@ -15,6 +15,7 @@ import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { css } from '@emotion/react';
 import { ClipLoader } from 'react-spinners/index'
+import { Link } from 'react-router-dom';
 
 
 const useStyles = makeStyles(componentStyles);
@@ -33,8 +34,10 @@ const Users = () => {
   border-color: #5e72e4;
 `;
     return (
-        <><StandardHeader classes={classes.bgGradientError}>
-        </StandardHeader>
+        <>
+
+            <StandardHeader classes={classes.bgGradientError}>
+            </StandardHeader>
             <Container
                 maxWidth={false}
                 component={Box}
@@ -164,9 +167,9 @@ const Users = () => {
                                                     </TableCell>
                                                 </TableRow> :
                                                 data && data.map((user) =>
-                                                    <TableRow key={user.id}>
+                                                    <TableRow key={user?.id}>
                                                         <TableCell>
-                                                            {user.id}
+                                                            {user?.id}
                                                         </TableCell>
                                                         <TableCell
                                                             classes={{
@@ -179,22 +182,29 @@ const Users = () => {
                                                             variant="head"
                                                             scope="row"
                                                         >
-                                                            {user.firstname}
+                                                            {user?.firstname}
                                                         </TableCell>
                                                         <TableCell classes={{ root: classes.tableCellRoot }}>
-                                                            {user.lastname}
+                                                            {user?.lastname}
                                                         </TableCell>
                                                         <TableCell classes={{ root: classes.tableCellRoot }}>
-                                                            {user.username}
+                                                            {user?.username}
                                                         </TableCell>
                                                         <Box
                                                             component={TableCell}
                                                             className={classes.tableCellRoot}
                                                             marginBottom="-2px"
                                                         >
-                                                            {user.email}
+                                                            {user?.email}
 
                                                         </Box>
+                                                        <TableCell>
+
+                                                            <Link to={"users/" + user?.id}>
+                                                                <i className="ni ni-archive-2"></i>
+                                                            </Link>
+
+                                                        </TableCell>
                                                     </TableRow>
                                                 )}
                                         </TableBody>

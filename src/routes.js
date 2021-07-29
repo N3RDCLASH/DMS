@@ -4,10 +4,11 @@ import Icons from "views/admin/Icons.js";
 import Login from "views/auth/Login.js";
 import Maps from "views/admin/Maps.js";
 import Profile from "views/admin/Profile.js";
+import Users from "views/admin/Users/Users.js";
 // import Register from "views/auth/Register.js";
 // import Tables from "views/admin/Tables.js";
 // @material-ui/icons components
-// import AccountCircle from "@material-ui/icons/AccountCircle";
+import AccountCircle from "@material-ui/icons/AccountCircle";
 import CloudUpload from "@material-ui/icons/CloudUpload";
 
 // import Dns from "@material-ui/icons/Dns";
@@ -20,6 +21,7 @@ import Person from "@material-ui/icons/Person";
 import Tv from "@material-ui/icons/Tv";
 import VpnKey from "@material-ui/icons/VpnKey";
 import FileUpload from "views/admin/FileUpload";
+import SingleUser from "views/admin/Users/SingleUser";
 
 var routes = [
 
@@ -30,7 +32,7 @@ var routes = [
     iconColor: "Primary",
     component: Dashboard,
     layout: "/app",
-    sidebar:true
+    sidebar: true
   },
   {
     path: "/icons",
@@ -49,7 +51,7 @@ var routes = [
     layout: "/app",
   },
   {
-    path: "/user-profile",
+    path: "/profile",
     name: "User Profile",
     icon: Person,
     iconColor: "WarningLight",
@@ -87,7 +89,26 @@ var routes = [
     iconColor: "Success",
     component: FileUpload,
     layout: "/app",
-    sidebar:true
+    sidebar: true
   },
+  {
+    path: "/users",
+    name: "Users",
+    icon: AccountCircle,
+    iconColor: "Success",
+    component: Users,
+    layout: "/app",
+    sidebar: true,
+    exact: true
+  },
+  {
+    path: "/users/:id",
+    name: "Single User",
+    iconColor: "Success",
+    component: SingleUser,
+    layout: "/app",
+    // sidebar: true
+  },
+
 ];
 export default routes;
