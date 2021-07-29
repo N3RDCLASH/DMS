@@ -14,14 +14,27 @@ import AdminLayout from "layouts/Admin.js";
 import AuthLayout from "layouts/Auth.js";
 
 import { ProtectedContainer } from 'components/ProtectedContainer/ProtectedContainer'
-
+import {
+    // useQuery,
+    // useMutation,
+    // useQueryClient,
+    QueryClient,
+    QueryClientProvider,
+} from 'react-query'
 
 
 
 const App = () => {
-
+    const queryClient = new QueryClient({
+        defaultOptions: {
+            queries: {
+                refetchOnWindowFocus: false,
+            },
+        },
+    });
     return (
-        <>
+        <QueryClientProvider client={queryClient}>
+
             <ThemeProvider theme={theme}>
                 {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
                 <CssBaseline />
@@ -34,7 +47,7 @@ const App = () => {
                     </Switch>
                 </BrowserRouter>
             </ThemeProvider>
-        </>
+        </QueryClientProvider>
     )
 }
 
