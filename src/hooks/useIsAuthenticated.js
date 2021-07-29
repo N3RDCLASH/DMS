@@ -29,7 +29,7 @@ export const useIsAuthenticated = () => {
 
     useEffect(() => {
 
-        console.log(isAuthenticated)
+        // console.log(isAuthenticated)
 
         if (!isAuthenticated) {
             if (history.location.pathname == "/auth/login")
@@ -53,7 +53,7 @@ export const useIsAuthenticated = () => {
         if (new Date() > new Date(isAuthenticated?.expires_at)) {
             dispatch(logout())
         }
-        console.log(isAuthenticated?.expires_at)
+        // console.log(isAuthenticated?.expires_at)
     })
 
 }
