@@ -10,7 +10,7 @@ import { Box, Card, CardHeader, CardContent, makeStyles, useTheme, Typography, G
 // import ArrowUpward from '@material-ui/icons/ArrowUpward';
 // import ArrowDownward from '@material-ui/icons/ArrowDownward';
 import StandardHeader from 'components/Headers/StandardHeader';
-import { fetchAllUsers } from '../../../services/userService'
+import { fetchUsers } from '../../../services/userService'
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { css } from '@emotion/react';
@@ -26,7 +26,7 @@ const Users = () => {
     const classes = useStyles();
     const theme = useTheme();
     const user = useSelector((state) => state.userLogin.userInfo);
-    const { isLoading, isError, data, error } = useQuery(['users', user.token], fetchAllUsers);
+    const { isLoading, isError, data, error } = useQuery(['users', user?.token], fetchUsers);
 
     const override = css`
   display: block;
