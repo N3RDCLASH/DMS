@@ -26,6 +26,7 @@ import componentStyles from "assets/theme/views/auth/login.js";
 import { login } from "actions/userActions";
 import { css } from "@emotion/react";
 import { useHistory } from "react-router-dom";
+import { Alert } from "@material-ui/lab";
 // import { useIsAuthtenticated } from "hooks/useIsAuthenticated";
 // import { Redirect } from "react-router-dom";
 const useStyles = makeStyles(componentStyles);
@@ -83,6 +84,7 @@ function Login() {
 
               } width={100} height="100" src={require("assets/img/icons/qualogy.svg").default} alt="" />
             </Box>
+            {error && <Alert severity="error">{error}</Alert>}
             {loading ? <ClipLoader loading={loading} css={override} size={60} /> :
               <form action="" onSubmit={handleSubmit(submitForm)}>
                 <FormControl
