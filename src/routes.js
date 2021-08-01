@@ -9,6 +9,7 @@ import Users from "views/admin/Users/Users.js";
 // import Tables from "views/admin/Tables.js";
 // @material-ui/icons components
 import AccountCircle from "@material-ui/icons/AccountCircle";
+import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
 import CloudUpload from "@material-ui/icons/CloudUpload";
 
 // import Dns from "@material-ui/icons/Dns";
@@ -22,6 +23,8 @@ import Tv from "@material-ui/icons/Tv";
 import VpnKey from "@material-ui/icons/VpnKey";
 import FileUpload from "views/admin/FileUpload";
 import SingleUser from "views/admin/Users/SingleUser";
+import SingleRole from "views/admin/Roles/SingleRole";
+import Roles from "views/admin/Roles/Roles";
 
 var routes = [
 
@@ -106,6 +109,24 @@ var routes = [
     name: "Single User",
     iconColor: "Success",
     component: SingleUser,
+    layout: "/app",
+    // sidebar: true
+  },
+  {
+    path: "/roles",
+    name: "Roles",
+    icon: SupervisedUserCircleIcon,
+    iconColor: "Success",
+    component: Roles,
+    layout: "/app",
+    sidebar: true,
+    exact: true
+  },
+  {
+    path: "/roles/:id",
+    name: "Single Role",
+    iconColor: "Success",
+    component: SingleRole,
     layout: "/app",
     // sidebar: true
   },
