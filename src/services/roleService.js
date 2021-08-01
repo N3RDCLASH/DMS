@@ -44,7 +44,7 @@ export const fetchRole = async ({ queryKey }) => {
 
 }
 
-export const updateRole = async ({ user, token, id }) => {
+export const updateRole = async ({ role, token, id }) => {
     const config = {
         headers: {
             "Content-Type": "application/json",
@@ -52,7 +52,7 @@ export const updateRole = async ({ user, token, id }) => {
         },
     };
     try {
-        await axios.put(`${apiUrl}/roles/${id}`, user, config)
+        await axios.put(`${apiUrl}/roles/${id}`, role, config)
     } catch (error) { console.log(error) }
 
 }
