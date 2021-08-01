@@ -27,7 +27,7 @@ import Email from "@material-ui/icons/Email";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import { Add, ArrowBack, Create, Delete } from "@material-ui/icons";
 import { useSelector } from "react-redux";
-import { QueryClient, useMutation, useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { fetchUser } from "services/userService";
 import { useForm } from "react-hook-form";
 import { updateUser } from "services/userService";
@@ -60,7 +60,6 @@ const SingleUser = () => {
     );
     const userUpdateMutation = useMutation(updateUser, {
         onSuccess: () => {
-            QueryClient.invalidateQueries("users");
         },
     });
 
