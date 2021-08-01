@@ -25,6 +25,9 @@ import FileUpload from "views/admin/FileUpload";
 import SingleUser from "views/admin/Users/SingleUser";
 import SingleRole from "views/admin/Roles/SingleRole";
 import Roles from "views/admin/Roles/Roles";
+import { Security } from "@material-ui/icons";
+import SinglePermission from "views/admin/Permissions/SinglePermission";
+import Permissions from "views/admin/Permissions/Permissions";
 
 var routes = [
 
@@ -89,7 +92,7 @@ var routes = [
     path: "/upload",
     name: "Upload",
     icon: CloudUpload,
-    iconColor: "Success",
+    iconColor: "success",
     component: FileUpload,
     layout: "/app",
     sidebar: true
@@ -98,7 +101,7 @@ var routes = [
     path: "/users",
     name: "Users",
     icon: AccountCircle,
-    iconColor: "Success",
+    iconColor: "success",
     component: Users,
     layout: "/app",
     sidebar: true,
@@ -107,7 +110,7 @@ var routes = [
   {
     path: "/users/:id",
     name: "Single User",
-    iconColor: "Success",
+    iconColor: "success",
     component: SingleUser,
     layout: "/app",
     // sidebar: true
@@ -116,7 +119,7 @@ var routes = [
     path: "/roles",
     name: "Roles",
     icon: SupervisedUserCircleIcon,
-    iconColor: "Success",
+    iconColor: "success",
     component: Roles,
     layout: "/app",
     sidebar: true,
@@ -125,10 +128,26 @@ var routes = [
   {
     path: "/roles/:id",
     name: "Single Role",
-    iconColor: "Success",
+    iconColor: "success",
     component: SingleRole,
     layout: "/app",
-    // sidebar: true
+  },
+  {
+    path: "/permissions",
+    name: "Permissions",
+    icon: Security,
+    iconColor: "success",
+    component: Permissions,
+    layout: "/app",
+    sidebar: true,
+    exact: true
+  },
+  {
+    path: "/permissions/:id",
+    name: "Single Permission",
+    iconColor: "success",
+    component: SinglePermission,
+    layout: "/app",
   },
 
 ];

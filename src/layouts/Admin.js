@@ -35,12 +35,13 @@ const Admin = () => {
 
   const getRoutes = (routes) => {
     return routes.map((prop, key) => {
-      if (prop.layout === "/app" && prop.sidebar == true) {
+      if (prop.layout === "/app") {
         return (
           <Route
             path={prop.layout + prop.path}
             component={prop.component}
             key={key}
+            exact={prop.exact ? true : false}
           />
         );
       } else {
@@ -64,7 +65,7 @@ const Admin = () => {
         <Sidebar
           routes={routes.filter(x => x.sidebar == true)}
           logo={{
-            innerLink: "/admin/index",
+            innerLink: "/app/home",
             imgSrc: require("../assets/img/brand/argon-react.png").default,
             imgAlt: "...",
           }}
