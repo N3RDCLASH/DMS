@@ -16,6 +16,8 @@ import { useSelector } from 'react-redux';
 import { css } from '@emotion/react';
 import { ClipLoader } from 'react-spinners/index'
 import { Link } from 'react-router-dom';
+import { Delete, Visibility } from '@material-ui/icons';
+import { green, red } from '@material-ui/core/colors';
 
 
 const useStyles = makeStyles(componentStyles);
@@ -198,11 +200,12 @@ const Users = () => {
                                                             {user?.email}
 
                                                         </Box>
-                                                        <TableCell>
+                                                        <TableCell style={{ display: "flex", justifyContent: "space-evenly" }}>
 
-                                                            <Link to={"users/" + user?.id}>
-                                                                <i className="ni ni-archive-2"></i>
+                                                            <Link to={"users/" + user?.id} >
+                                                                <Visibility style={{ color: green[500] }}></Visibility>
                                                             </Link>
+                                                            <Delete style={{ color: red[500] }}></Delete>
 
                                                         </TableCell>
                                                     </TableRow>
