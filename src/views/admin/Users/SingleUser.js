@@ -1,11 +1,11 @@
-import { Box, Button, Card, CardContent, CardHeader, Container, FilledInput, FormControl, Grid, InputAdornment, makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@material-ui/core'
+import { Box, Button, Card, CardContent, CardHeader, Container, FilledInput, FormControl, Grid, InputAdornment, makeStyles, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow, Typography } from '@material-ui/core'
 import StandardHeader from 'components/Headers/StandardHeader'
 import componentStyles from "assets/theme/views/admin/dashboard.js";
 import React, { useState } from 'react'
 import Email from '@material-ui/icons/Email';
 // import Lock from '@material-ui/icons/Lock';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import { ArrowBack, Create } from '@material-ui/icons';
+import { Add, ArrowBack, Create, Delete } from '@material-ui/icons';
 import { useSelector } from 'react-redux';
 import { QueryClient, useMutation, useQuery } from 'react-query';
 import { fetchUser } from 'services/userService';
@@ -14,12 +14,21 @@ import { updateUser } from 'services/userService';
 import { Link, useParams } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners';
 import { css } from '@emotion/react';
+import { red } from '@material-ui/core/colors';
 // import { Grain } from '@material-ui/icons/';
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+
+
+
+
 
 const SingleUser = () => {
 
     const useStyles = makeStyles(componentStyles);
+    const MySwal = withReactContent(Swal)
     const classes = useStyles();
+    const [roleEditable, setRoleEditable] = useState(false);
     const [editable, setEditable] = useState(false);
     let { id } = useParams();
 
@@ -33,16 +42,45 @@ const SingleUser = () => {
             QueryClient.invalidateQueries('users')
         }
     });
+
+    const roleRemoveMutation = useMutation()
+
+
+
     const override = css`
-  display: block;
-  margin: 0 auto;
-  border-color: #5e72e4;
-`;
+    display: block;
+    margin: 0 auto;
+    border-color: #5e72e4;
+    `;
+
     // form submission
     const onSubmit = (data) => {
         console.log(data)
         userUpdateMutation.mutate({ user: data, token: user?.token, id })
     }
+    const handleRoleDelete = (role_id) => {
+        console.log(role_id)
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                Swal.fire(
+                    'Deleted!',
+                    'Your file has been deleted.',
+                    'success'
+                )
+            }
+        })
+
+    }
+
     return (
         <div>
             <StandardHeader classes={classes.bgGradientError}>
@@ -284,7 +322,7 @@ const SingleUser = () => {
                                                     color="primary"
                                                     size="small"
                                                     className="btn-icon btn-3"
-                                                    onClick={() => setEditable(!editable)}
+                                                    onClick={() => setRoleEditable(!roleEditable)}
                                                 >
                                                     <Box
                                                         component={Create}
@@ -330,6 +368,15 @@ const SingleUser = () => {
                                                 >
                                                     Role
                                                 </TableCell>
+                                                <TableCell
+                                                    classes={{
+                                                        root:
+                                                            classes.tableCellRoot +
+                                                            " " +
+                                                            classes.tableCellRootHead,
+                                                    }}
+                                                >
+                                                </TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
@@ -353,10 +400,27 @@ const SingleUser = () => {
                                                     >
                                                         {role.name}
                                                     </TableCell>
+                                                    <TableCell
+                                                        classes={{
+                                                            root:
+                                                                classes.tableCellRoot +
+                                                                " " +
+                                                                classes.tableCellRootHead,
+                                                        }}
+                                                    >
+                                                        {roleEditable && < Delete data-id={role.id} style={{ color: red[500], cursor: "pointer" }} onClick={() => handleRoleDelete(role.id)} ></Delete>}
+                                                    </TableCell>
                                                 </TableRow>
                                             )}
+
                                         </TableBody>
                                     </Box>
+                                    <TableFooter style={{
+                                        display: 'flex', justifyContent: "flex-end"
+                                    }}>
+                                        <Button variant="contained"
+                                            color="primary" style={{ justifySelf: "flex-end", marginTop: "1em" }}><Add></Add></Button>
+                                    </TableFooter>
                                 </TableContainer>
                             </CardContent>
                         </Card>
