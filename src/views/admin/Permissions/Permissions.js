@@ -14,8 +14,8 @@ import { useSelector } from 'react-redux';
 import { css } from '@emotion/react';
 import { ClipLoader } from 'react-spinners/index'
 import { Link } from 'react-router-dom';
-import { Delete, Visibility } from '@material-ui/icons';
-import { green, red, } from '@material-ui/core/colors';
+import { Visibility } from '@material-ui/icons';
+import { green } from '@material-ui/core/colors';
 import { fetchPermissions } from 'services/permissionService';
 
 
@@ -160,7 +160,6 @@ const Permissions = () => {
                                                             <Link to={"permissions/" + permission?.id} >
                                                                 <Visibility style={{ color: green[500] }}></Visibility>
                                                             </Link>
-                                                            <Delete style={{ color: red[500] }}></Delete>
                                                         </TableCell>
                                                     </TableRow>
                                                 )}
