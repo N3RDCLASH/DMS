@@ -18,6 +18,7 @@ import { red } from '@material-ui/core/colors';
 // import { Grain } from '@material-ui/icons/';
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import { removeRoleFromUser } from 'services/userService';
 
 
 
@@ -43,7 +44,10 @@ const SingleUser = () => {
         }
     });
 
-    const roleRemoveMutation = useMutation()
+    const roleRemoveMutation = useMutation(removeRoleFromUser, {
+        onSuccess: () => { },
+        onError: (error) => { console.log(error) }
+    })
 
 
 
@@ -70,12 +74,21 @@ const SingleUser = () => {
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
+                roleRemoveMutation.mutate({ role: { role_id }, token: user?.token, id }, {
+                    onSuccess: () => {
+                        Swal.fire(
+                            'Deleted!',
+                            'Role has been deleted.',
+                            'success'
+                        )
+                    },
+                    onError: () => Swal.fire(
+                        'Failed!',
+                        'Role has not been deleted.',
+                        'error'
+                    )
+                })
 
-                Swal.fire(
-                    'Deleted!',
-                    'Your file has been deleted.',
-                    'success'
-                )
             }
         })
 

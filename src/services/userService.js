@@ -98,7 +98,7 @@ export const removeRoleFromUser = async ({ role, token, id }) => {
     };
 
     try {
-        await axios.delete(`${apiUrl}/users/${id}`, role, config)
+        await axios.delete(`${apiUrl}/users/${id}/roles`, { ...config, data: { ...role } })
     } catch (error) {
         console.log(error)
     }
