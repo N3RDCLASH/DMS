@@ -418,8 +418,8 @@ const SingleUser = () => {
                                     <TableFooter style={{
                                         display: 'flex', justifyContent: "flex-end"
                                     }}>
-                                        <Button variant="contained"
-                                            color="primary" style={{ justifySelf: "flex-end", marginTop: "1em" }}><Add></Add></Button>
+                                        {<Button variant="contained"
+                                            color="primary" style={{ justifySelf: "flex-end", marginTop: "1em" }} disabled={!roleEditable}><Add></Add></Button>}
                                     </TableFooter>
                                 </TableContainer>
                             </CardContent>
