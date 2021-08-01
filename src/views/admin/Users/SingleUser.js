@@ -1,106 +1,119 @@
-import { Box, Button, Card, CardContent, CardHeader, Container, FilledInput, FormControl, Grid, InputAdornment, makeStyles, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow, Typography } from '@material-ui/core'
-import StandardHeader from 'components/Headers/StandardHeader'
+import {
+    Box,
+    Button,
+    Card,
+    CardContent,
+    CardHeader,
+    Container,
+    FilledInput,
+    FormControl,
+    Grid,
+    InputAdornment,
+    makeStyles,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableFooter,
+    TableHead,
+    TableRow,
+    Typography,
+} from "@material-ui/core";
+import StandardHeader from "components/Headers/StandardHeader";
 import componentStyles from "assets/theme/views/admin/dashboard.js";
-import React, { useState } from 'react'
-import Email from '@material-ui/icons/Email';
+import React, { useState } from "react";
+import Email from "@material-ui/icons/Email";
 // import Lock from '@material-ui/icons/Lock';
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import { Add, ArrowBack, Create, Delete } from '@material-ui/icons';
-import { useSelector } from 'react-redux';
-import { QueryClient, useMutation, useQuery } from 'react-query';
-import { fetchUser } from 'services/userService';
-import { useForm } from 'react-hook-form';
-import { updateUser } from 'services/userService';
-import { Link, useParams } from 'react-router-dom';
-import { ClipLoader } from 'react-spinners';
-import { css } from '@emotion/react';
-import { red } from '@material-ui/core/colors';
-// import { Grain } from '@material-ui/icons/';
-import Swal from 'sweetalert2'
-import withReactContent from 'sweetalert2-react-content'
-import { removeRoleFromUser } from 'services/userService';
-
-
-
-
+import AccountCircle from "@material-ui/icons/AccountCircle";
+import { Add, ArrowBack, Create, Delete } from "@material-ui/icons";
+import { useSelector } from "react-redux";
+import { QueryClient, useMutation, useQuery } from "react-query";
+import { fetchUser } from "services/userService";
+import { useForm } from "react-hook-form";
+import { updateUser } from "services/userService";
+import { Link, useParams } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
+import { css } from "@emotion/react";
+import { red } from "@material-ui/core/colors";
+import Swal from "sweetalert2";
+import { removeRoleFromUser } from "services/userService";
 
 const SingleUser = () => {
-
     const useStyles = makeStyles(componentStyles);
-    const MySwal = withReactContent(Swal)
     const classes = useStyles();
     const [roleEditable, setRoleEditable] = useState(false);
     const [editable, setEditable] = useState(false);
     let { id } = useParams();
 
-    const { register, handleSubmit, watch, formState: { errors } } = useForm();
+    const {
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors },
+    } = useForm();
     const user = useSelector((state) => state.userLogin.userInfo);
 
     // queries
-    const { isLoading, isError, data, error } = useQuery(['users', user?.token, id], fetchUser);
+    const { isLoading, isError, data, error } = useQuery(
+        ["users", user?.token, id],
+        fetchUser
+    );
     const userUpdateMutation = useMutation(updateUser, {
         onSuccess: () => {
-            QueryClient.invalidateQueries('users')
-        }
+            QueryClient.invalidateQueries("users");
+        },
     });
 
     const roleRemoveMutation = useMutation(removeRoleFromUser, {
         onSuccess: () => { },
-        onError: (error) => { console.log(error) }
-    })
-
-
+        onError: (error) => {
+            console.log(error);
+        },
+    });
 
     const override = css`
     display: block;
     margin: 0 auto;
     border-color: #5e72e4;
-    `;
+  `;
 
     // form submission
     const onSubmit = (data) => {
-        console.log(data)
-        userUpdateMutation.mutate({ user: data, token: user?.token, id })
-    }
+        console.log(data);
+        userUpdateMutation.mutate({ user: data, token: user?.token, id });
+    };
     const handleRoleDelete = (role_id) => {
-        console.log(role_id)
         Swal.fire({
-            title: 'Are you sure?',
+            title: "Are you sure?",
             text: "You won't be able to revert this!",
-            icon: 'warning',
+            icon: "warning",
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
         }).then((result) => {
             if (result.isConfirmed) {
-                roleRemoveMutation.mutate({ role: { role_id }, token: user?.token, id }, {
-                    onSuccess: () => {
-                        Swal.fire(
-                            'Deleted!',
-                            'Role has been deleted.',
-                            'success'
-                        )
-                    },
-                    onError: () => Swal.fire(
-                        'Failed!',
-                        'Role has not been deleted.',
-                        'error'
-                    )
-                })
-
+                roleRemoveMutation.mutate(
+                    { role: { role_id }, token: user?.token, id },
+                    {
+                        onSuccess: () => {
+                            Swal.fire("Deleted!", "Role has been deleted.", "success");
+                        },
+                        onError: () =>
+                            Swal.fire("Failed!", "Role has not been deleted.", "error"),
+                    }
+                );
             }
-        })
-
-    }
+        });
+    };
 
     return (
         <div>
             <StandardHeader classes={classes.bgGradientError}>
-                <Link to="/app/users" >
-                    <ArrowBack style={{ width: 30, height: "auto", color: "white" }}>
-
-                    </ArrowBack>
+                <Link to="/app/users">
+                    <ArrowBack
+                        style={{ width: 30, height: "auto", color: "white" }}
+                    ></ArrowBack>
                 </Link>
             </StandardHeader>
 
@@ -111,14 +124,14 @@ const SingleUser = () => {
                 classes={{ root: classes.containerRoot }}
             >
                 <Grid container>
-
                     <Grid
                         item
                         xs={12}
                         xl={8}
                         component={Box}
                         marginBottom="3rem!important"
-                        classes={{ root: classes.gridItemRoot }}>
+                        classes={{ root: classes.gridItemRoot }}
+                    >
                         <Card>
                             <CardHeader
                                 subheader={
@@ -167,9 +180,10 @@ const SingleUser = () => {
                                 }
                                 classes={{ root: classes.cardHeaderRoot }}
                             ></CardHeader>
-                            <CardContent >
-                                {isLoading ?
-                                    <ClipLoader loading={isLoading} css={override} size={60} /> :
+                            <CardContent>
+                                {isLoading ? (
+                                    <ClipLoader loading={isLoading} css={override} size={60} />
+                                ) : (
                                     <form action="" onSubmit={handleSubmit(onSubmit)}>
                                         <Grid container>
                                             <Grid item xs={12} lg={6}>
@@ -183,8 +197,8 @@ const SingleUser = () => {
                                                         autoComplete="off"
                                                         type="text"
                                                         placeholder="First Name"
-                                                        {...register('firstname')}
-                                                        onInput={({ target: { value } }) => (value)}
+                                                        {...register("firstname")}
+                                                        onInput={({ target: { value } }) => value}
                                                         required
                                                         readOnly={!editable}
                                                         defaultValue={"" + data?.firstname}
@@ -197,30 +211,31 @@ const SingleUser = () => {
                                                     />
                                                 </FormControl>
                                             </Grid>
-                                            <Grid item xs={12} lg={6}><FormControl
-                                                variant="filled"
-                                                component={Box}
-                                                width="100%"
-                                                marginBottom="1rem!important"
-                                            >
-                                                <FilledInput
-                                                    autoComplete="off"
-                                                    type="text"
-                                                    placeholder="Last Name"
-                                                    {...register('lastname')}
-                                                    onInput={({ target: { value } }) => (value)}
-                                                    required
-                                                    readOnly={!editable}
-                                                    defaultValue={"" + data?.lastname}
-                                                    autoFocus
-                                                    startAdornment={
-                                                        <InputAdornment position="start">
-                                                            <AccountCircle />
-                                                        </InputAdornment>
-                                                    }
-                                                />
-                                            </FormControl></Grid>
-
+                                            <Grid item xs={12} lg={6}>
+                                                <FormControl
+                                                    variant="filled"
+                                                    component={Box}
+                                                    width="100%"
+                                                    marginBottom="1rem!important"
+                                                >
+                                                    <FilledInput
+                                                        autoComplete="off"
+                                                        type="text"
+                                                        placeholder="Last Name"
+                                                        {...register("lastname")}
+                                                        onInput={({ target: { value } }) => value}
+                                                        required
+                                                        readOnly={!editable}
+                                                        defaultValue={"" + data?.lastname}
+                                                        autoFocus
+                                                        startAdornment={
+                                                            <InputAdornment position="start">
+                                                                <AccountCircle />
+                                                            </InputAdornment>
+                                                        }
+                                                    />
+                                                </FormControl>
+                                            </Grid>
                                         </Grid>
 
                                         <FormControl
@@ -233,8 +248,8 @@ const SingleUser = () => {
                                                 autoComplete="off"
                                                 type="text"
                                                 placeholder="Username"
-                                                {...register('username')}
-                                                onInput={({ target: { value } }) => (value)}
+                                                {...register("username")}
+                                                onInput={({ target: { value } }) => value}
                                                 required
                                                 readOnly={!editable}
                                                 defaultValue={"" + data?.username}
@@ -256,8 +271,8 @@ const SingleUser = () => {
                                                 autoComplete="off"
                                                 type="text"
                                                 placeholder="Email"
-                                                {...register('email')}
-                                                onInput={({ target: { value } }) => (value)}
+                                                {...register("email")}
+                                                onInput={({ target: { value } }) => value}
                                                 required
                                                 disabled
                                                 defaultValue={"" + data?.email}
@@ -269,6 +284,7 @@ const SingleUser = () => {
                                                 }
                                             />
                                         </FormControl>
+                                        {/* Todo: put this in seperate form */}
                                         {/* <FormControl
                                         variant="filled"
                                         component={Box}
@@ -289,13 +305,22 @@ const SingleUser = () => {
                                             }
                                             />
                                         </FormControl> */}
-                                        <Box textAlign="center" marginTop="1.5rem" marginBottom="1.5rem">
-                                            <Button disabled={!editable} type="submit" color="primary" variant="contained" >
+                                        <Box
+                                            textAlign="center"
+                                            marginTop="1.5rem"
+                                            marginBottom="1.5rem"
+                                        >
+                                            <Button
+                                                disabled={!editable}
+                                                type="submit"
+                                                color="primary"
+                                                variant="contained"
+                                            >
                                                 Update
                                             </Button>
                                         </Box>
                                     </form>
-                                }
+                                )}
                             </CardContent>
                         </Card>
                     </Grid>
@@ -305,7 +330,8 @@ const SingleUser = () => {
                         xl={4}
                         component={Box}
                         marginBottom="3rem!important"
-                        classes={{ root: classes.gridItemRoot }}>
+                        classes={{ root: classes.gridItemRoot }}
+                    >
                         <Card>
                             <CardHeader
                                 subheader={
@@ -363,12 +389,14 @@ const SingleUser = () => {
                                     >
                                         <TableHead>
                                             <TableRow>
-                                                <TableCell classes={{
-                                                    root:
-                                                        classes.tableCellRoot +
-                                                        " " +
-                                                        classes.tableCellRootHead,
-                                                }} >
+                                                <TableCell
+                                                    classes={{
+                                                        root:
+                                                            classes.tableCellRoot +
+                                                            " " +
+                                                            classes.tableCellRootHead,
+                                                    }}
+                                                >
                                                     ID
                                                 </TableCell>
                                                 <TableCell
@@ -388,51 +416,67 @@ const SingleUser = () => {
                                                             " " +
                                                             classes.tableCellRootHead,
                                                     }}
-                                                >
-                                                </TableCell>
+                                                ></TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
-                                            {data?.roles && data?.roles.map(role =>
-                                                <TableRow>
-                                                    <TableCell classes={{
-                                                        root:
-                                                            classes.tableCellRoot +
-                                                            " " +
-                                                            classes.tableCellRootHead,
-                                                    }} >
-                                                        {role.id}
-                                                    </TableCell>
-                                                    <TableCell
-                                                        classes={{
-                                                            root:
-                                                                classes.tableCellRoot +
-                                                                " " +
-                                                                classes.tableCellRootHead,
-                                                        }}
-                                                    >
-                                                        {role.name}
-                                                    </TableCell>
-                                                    <TableCell
-                                                        classes={{
-                                                            root:
-                                                                classes.tableCellRoot +
-                                                                " " +
-                                                                classes.tableCellRootHead,
-                                                        }}
-                                                    >
-                                                        {roleEditable && < Delete data-id={role.id} style={{ color: red[500], cursor: "pointer" }} onClick={() => handleRoleDelete(role.id)} ></Delete>}
-                                                    </TableCell>
-                                                </TableRow>
-                                            )}
-
+                                            {data?.roles &&
+                                                data?.roles.map((role) => (
+                                                    <TableRow>
+                                                        <TableCell
+                                                            classes={{
+                                                                root:
+                                                                    classes.tableCellRoot +
+                                                                    " " +
+                                                                    classes.tableCellRootHead,
+                                                            }}
+                                                        >
+                                                            {role.id}
+                                                        </TableCell>
+                                                        <TableCell
+                                                            classes={{
+                                                                root:
+                                                                    classes.tableCellRoot +
+                                                                    " " +
+                                                                    classes.tableCellRootHead,
+                                                            }}
+                                                        >
+                                                            {role.name}
+                                                        </TableCell>
+                                                        <TableCell
+                                                            classes={{
+                                                                root:
+                                                                    classes.tableCellRoot +
+                                                                    " " +
+                                                                    classes.tableCellRootHead,
+                                                            }}
+                                                        >
+                                                            {roleEditable && (
+                                                                <Delete
+                                                                    data-id={role.id}
+                                                                    style={{ color: red[500], cursor: "pointer" }}
+                                                                    onClick={() => handleRoleDelete(role.id)}
+                                                                ></Delete>
+                                                            )}
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))}
                                         </TableBody>
                                     </Box>
-                                    <TableFooter style={{
-                                        display: 'flex', justifyContent: "flex-end"
-                                    }}>
-                                        {<Button variant="contained"
-                                            color="primary" style={{ justifySelf: "flex-end", marginTop: "1em" }} disabled={!roleEditable}><Add></Add></Button>}
+                                    <TableFooter
+                                        style={{
+                                            display: "flex",
+                                            justifyContent: "flex-end",
+                                        }}
+                                    >
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            style={{ justifySelf: "flex-end", marginTop: "1em" }}
+                                            disabled={!roleEditable}
+                                        >
+                                            <Add></Add>
+                                        </Button>
                                     </TableFooter>
                                 </TableContainer>
                             </CardContent>
@@ -440,8 +484,8 @@ const SingleUser = () => {
                     </Grid>
                 </Grid>
             </Container>
-        </div >
-    )
-}
+        </div>
+    );
+};
 
-export default SingleUser
+export default SingleUser;
