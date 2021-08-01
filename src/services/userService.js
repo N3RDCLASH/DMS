@@ -1,6 +1,19 @@
 import axios from 'axios'
 import { apiUrl } from 'index';
 
+export const createUser = async ({ user, token }) => {
+
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+    };
+    try {
+        await axios.post(`${apiUrl}/users`, user, config)
+    } catch (error) { console.log(error) }
+}
+
 export const fetchUsers = async ({ queryKey }) => {
     const token = queryKey[1]
     const config = {
@@ -30,6 +43,7 @@ export const fetchUser = async ({ queryKey }) => {
     } catch (error) { console.log(error) }
 
 }
+
 export const updateUser = async ({ user, token, id }) => {
     const config = {
         headers: {
@@ -43,3 +57,50 @@ export const updateUser = async ({ user, token, id }) => {
 
 }
 
+export const deleteUser = async ({ token, id }) => {
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+    };
+
+    try {
+        await axios.delete(`${apiUrl}/users/${id}`, config)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
+export const addRoleToUser = async ({ role, token, id }) => {
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+    };
+
+    try {
+
+        await axios.post(`${apiUrl}/users/${id}`, role, config)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const removeRoleFromUser = async ({ role, token, id }) => {
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+    };
+
+    try {
+        await axios.delete(`${apiUrl}/users/${id}`, role, config)
+    } catch (error) {
+        console.log(error)
+    }
+
+}
