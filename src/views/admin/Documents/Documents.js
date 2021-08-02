@@ -20,7 +20,7 @@ function Documents() {
     const dashboardStyles = makeStyles(componentStyles1);
     const classes = dashboardStyles()
     const user = useSelector((state) => state.userLogin.userInfo);
-    const { isLoading, isError, data, error } = useQuery(['users', user?.token, user?.id], fetchDocumentsByUser);
+    const { isLoading, isError, data, error, refetch } = useQuery(['users', user?.token, user?.id], fetchDocumentsByUser);
 
     const override = css`
   display: block;
@@ -228,7 +228,7 @@ function Documents() {
                     </Grid>
                 </Grid>
             </Container>
-            <DropzoneDialog open={open} handleClose={handleClose}></DropzoneDialog>
+            <DropzoneDialog open={open} handleClose={handleClose} refetch={refetch}></DropzoneDialog>
         </>
     )
 }
