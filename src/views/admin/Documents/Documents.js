@@ -6,7 +6,7 @@ import StandardHeader from "components/Headers/StandardHeader.js";
 import { StyledDropzone } from 'components/StyledDropzone/StyledDropzone';
 import { useDropzone } from 'react-dropzone';
 
-function FileUpload() {
+function Documents() {
 
     const useStyles = makeStyles(componentStyles);
     const classes = useStyles()
@@ -43,4 +43,4 @@ function FileUpload() {
     )
 }
 
-export default FileUpload
+export default Documents
