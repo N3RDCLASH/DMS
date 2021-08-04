@@ -75,23 +75,24 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export function DropzoneDialog(props) {
     const [files, setFiles] = useState([]);
-    const [filesAvailable, setFilesAvaillable] = useState(true);
+    const [filesAvailable, setFilesAvaillable] = useState(false);
     const dialogStyles = makeStyles(componentStyles);
     const classes = dialogStyles()
 
     // Effects
-    useEffect(() => () => {
+    useEffect(() => {
         // Make sure to revoke the data uris to avoid memory leaks
         files.forEach(file => URL.revokeObjectURL(file.preview));
-        setFilesAvaillable(files.length > 0)
+        setFilesAvaillable(files.length > 0 ? true : false)
     }, [files]);
 
 
     useEffect(() => {
         if (!props.open) {
             setFiles([])
+            setFilesAvaillable(false)
         }
-    }, [props.open])
+    }, [props.open, files.length])
 
     const user = useSelector(state => state.userLogin.userInfo)
     const {
@@ -193,7 +194,7 @@ export function DropzoneDialog(props) {
                 <Button onClick={props.handleClose} color="secondary" variant="contained">
                     Cancel
                 </Button>
-                <Button onClick={uploadFile} disabled={filesAvailable} color="primary" variant="contained">
+                <Button onClick={uploadFile} disabled={!filesAvailable} color="primary" variant="contained">
                     Upload
                 </Button>
             </DialogActions>
