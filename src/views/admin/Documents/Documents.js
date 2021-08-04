@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Box, Button, Card, CardContent, CardHeader, Grid, makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@material-ui/core'
 import Container from "@material-ui/core/Container";
 import StandardHeader from "components/Headers/StandardHeader.js";
@@ -7,20 +7,24 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Add, CloudDownload, Delete, Visibility } from '@material-ui/icons';
 import { green, red, yellow } from '@material-ui/core/colors';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { css } from '@emotion/react';
 import { fetchDocumentsByUser } from 'services/documentService';
 import componentStyles1 from "assets/theme/views/admin/dashboard.js";
 import { DropzoneDialog } from 'components/StyledDropzone/DropzoneDialog';
+import { deleteDocument } from 'services/documentService';
+import Swal from 'sweetalert2';
+import { downloadDocument } from 'services/documentService';
 
 
 
 function Documents() {
-
+    const [documentID, setDocumentID] = useState()
     const dashboardStyles = makeStyles(componentStyles1);
     const classes = dashboardStyles()
     const user = useSelector((state) => state.userLogin.userInfo);
-    const { isLoading, isError, data, error, refetch } = useQuery(['users', user?.token, user?.id], fetchDocumentsByUser);
+    const { isLoading, isError, data, error, refetch } = useQuery(['documents', user?.token, user?.id], fetchDocumentsByUser);
+    const { data: downloadedFile, refetch: refetchDownload } = useQuery(['documentDownload', user?.token, documentID], downloadDocument, { enabled: false });
 
     const override = css`
   display: block;
@@ -36,6 +40,42 @@ function Documents() {
     const handleClose = () => {
         setOpen(false);
     };
+
+    const deleteMutation = useMutation(deleteDocument)
+    const handleDelete = (id) => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteMutation.mutate(
+                    { token: user?.token, id },
+                    {
+                        onSuccess: () => {
+                            Swal.fire("Deleted!", "Document has been deleted.", "success");
+                            refetch()
+                        },
+                        onError: () =>
+                            Swal.fire("Failed!", "Document has not been deleted.", "error"),
+                    }
+                );
+            }
+            if (result.isDismissed) {
+                Swal.fire("Canceled!", "Document has not been deleted.", "info")
+            }
+        });
+    }
+    const downloadFile = (id) => {
+        setDocumentID(id);
+        refetchDownload()
+        return downloadedFile;
+    }
+
     return (
         <>
             <StandardHeader classes={classes.bgGradientError}>
@@ -213,8 +253,8 @@ function Documents() {
                                                             <Link to={"users/" + document?.id} style={{ margin: "0 5px" }} >
                                                                 <Visibility style={{ color: green[500] }}></Visibility>
                                                             </Link>
-                                                            <Delete style={{ color: red[500], margin: "0 5px" }}></Delete>
-                                                            <CloudDownload style={{ color: yellow[500], margin: "0 5px" }}></CloudDownload>
+                                                            <Delete style={{ color: red[500], margin: "0 5px", cursor: "pointer" }} onClick={() => handleDelete(document?.id)}></Delete>
+                                                            <CloudDownload style={{ color: yellow[500], margin: "0 5px", cursor: "pointer" }} onClick={() => downloadFile(document?.id)} ></CloudDownload>
 
                                                         </TableCell>
                                                     </TableRow>
