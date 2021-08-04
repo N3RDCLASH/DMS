@@ -28,20 +28,13 @@ const SingleRole = () => {
     const user = useSelector((state) => state.userLogin.userInfo);
 
     // queries
-    const { isLoading, isError, data, error } = useQuery(['role', user?.token, id], fetchRole);
+    const { isLoading, isError, data, error, refetch } = useQuery(['role', user?.token, id], fetchRole);
 
     const roleUpdateMutation = useMutation(updateRole, {
         onSuccess: () => {
         }
     });
-    const permissionRemoveMutation = useMutation(removePermissionFromRole, {
-        onSuccess: () => {
-
-        },
-        onError: (error) => {
-            console.log(error);
-        },
-    });
+    const permissionRemoveMutation = useMutation(removePermissionFromRole);
     const override = css`
   display: block;
   margin: 0 auto;
@@ -74,6 +67,7 @@ const SingleRole = () => {
                     { permission: { permission_id }, token: user?.token, id },
                     {
                         onSuccess: () => {
+                            refetch()
                             Swal.fire("Deleted!", "Permission has been deleted.", "success");
                         },
                         onError: () =>
@@ -235,7 +229,7 @@ const SingleRole = () => {
                                                 variant="h3"
                                                 marginBottom="0!important"
                                             >
-                                                Roles
+                                                Permissions
                                             </Box>
                                         </Grid>
                                         <Grid item xs="auto">

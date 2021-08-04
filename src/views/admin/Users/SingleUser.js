@@ -54,13 +54,24 @@ const SingleUser = () => {
     const user = useSelector((state) => state.userLogin.userInfo);
 
     // queries
-    const { isLoading, isError, data, error } = useQuery(
+    const { isLoading, isError, data, error, refetch } = useQuery(
         ["users", user?.token, id],
         fetchUser
     );
     const userUpdateMutation = useMutation(updateUser, {
         onSuccess: () => {
+            Toast.fire({
+                icon: 'success',
+                title: 'User updated successfully'
+            });
+            refetch()
         },
+        onError: () => {
+            Toast.fire({
+                icon: 'error',
+                title: 'User update failed'
+            });
+        }
     });
 
     const roleRemoveMutation = useMutation(removeRoleFromUser, {
@@ -69,7 +80,17 @@ const SingleUser = () => {
             console.log(error);
         },
     });
-
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    })
     const override = css`
     display: block;
     margin: 0 auto;
