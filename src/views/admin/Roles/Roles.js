@@ -10,7 +10,7 @@ import { Box, Card, CardHeader, CardContent, makeStyles, useTheme, Typography, G
 // import ArrowUpward from '@material-ui/icons/ArrowUpward';
 // import ArrowDownward from '@material-ui/icons/ArrowDownward';
 import StandardHeader from 'components/Headers/StandardHeader';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { css } from '@emotion/react';
 import { ClipLoader } from 'react-spinners/index'
@@ -18,6 +18,8 @@ import { Link } from 'react-router-dom';
 import { fetchRoles } from 'services/roleService';
 import { Delete, Visibility } from '@material-ui/icons';
 import { green, red, } from '@material-ui/core/colors';
+import Swal from 'sweetalert2';
+import { deleteRole } from 'services/roleService';
 
 
 const useStyles = makeStyles(componentStyles);
@@ -28,13 +30,44 @@ const Roles = () => {
     const classes = useStyles();
     const theme = useTheme();
     const user = useSelector((state) => state.userLogin.userInfo);
-    const { isLoading, isError, data, error } = useQuery(['roles', user?.token], fetchRoles);
+    const { isLoading, isError, data, error, refetch } = useQuery(['roles', user?.token], fetchRoles);
 
     const override = css`
   display: block;
   margin: 0 auto;
   border-color: #5e72e4;
 `;
+
+    const deleteMutation = useMutation(deleteRole)
+
+    const handleDelete = (id) => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteMutation.mutate(
+                    { token: user?.token, id },
+                    {
+                        onSuccess: () => {
+                            Swal.fire("Deleted!", "Role has been deleted.", "success");
+                            refetch()
+                        },
+                        onError: () =>
+                            Swal.fire("Failed!", "Role has not been deleted.", "error"),
+                    }
+                );
+            }
+            if (result.isDismissed) {
+                Swal.fire("Canceled!", "Role has not been deleted.", "info")
+            }
+        });
+    }
     return (
         <>
 
@@ -161,7 +194,7 @@ const Roles = () => {
                                                             <Link to={"roles/" + role?.id} >
                                                                 <Visibility style={{ color: green[500] }}></Visibility>
                                                             </Link>
-                                                            <Delete style={{ color: red[500] }}></Delete>
+                                                            <Delete style={{ color: red[500], cursor: "pointer" }} onClick={() => handleDelete(role?.id)}></Delete>
                                                         </TableCell>
                                                     </TableRow>
                                                 )}
