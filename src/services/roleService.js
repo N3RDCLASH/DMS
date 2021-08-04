@@ -11,7 +11,7 @@ export const createRole = async ({ role, token }) => {
     };
     try {
         await axios.post(`${apiUrl}/roles`, role, config)
-    } catch (error) { console.log(error) }
+    } catch (error) { throw new Error() }
 }
 
 export const fetchRoles = async ({ queryKey }) => {
@@ -25,7 +25,7 @@ export const fetchRoles = async ({ queryKey }) => {
     try {
         const { data } = await axios.get(`${apiUrl}/roles`, config)
         return data
-    } catch (error) { console.log(error) }
+    } catch (error) { throw new Error() }
 }
 
 export const fetchRole = async ({ queryKey }) => {
@@ -40,7 +40,7 @@ export const fetchRole = async ({ queryKey }) => {
     try {
         const { data } = await axios.get(`${apiUrl}/roles/${id}`, config)
         return data
-    } catch (error) { console.log(error) }
+    } catch (error) { throw new Error() }
 
 }
 
@@ -53,7 +53,7 @@ export const updateRole = async ({ role, token, id }) => {
     };
     try {
         await axios.put(`${apiUrl}/roles/${id}`, role, config)
-    } catch (error) { console.log(error) }
+    } catch (error) { throw new Error() }
 
 }
 
@@ -68,7 +68,7 @@ export const deleteRole = async ({ token, id }) => {
     try {
         await axios.delete(`${apiUrl}/roles/${id}`, config)
     } catch (error) {
-        console.log(error)
+        throw new Error()
     }
 }
 
@@ -85,7 +85,7 @@ export const addPermissionToRole = async ({ permission, token, id }) => {
 
         await axios.post(`${apiUrl}/roles/${id}`, permission, config)
     } catch (error) {
-        console.log(error)
+        throw new Error()
     }
 }
 
@@ -98,9 +98,9 @@ export const removePermissionFromRole = async ({ permission, token, id }) => {
     };
 
     try {
-        await axios.delete(`${apiUrl}/roles/${id}/permission`, { ...config, data: { ...permission } })
+        await axios.delete(`${apiUrl}/roles/${id}/permissions`, { ...config, data: { ...permission } })
     } catch (error) {
-        console.log(error)
+        throw new Error()
     }
 
 }

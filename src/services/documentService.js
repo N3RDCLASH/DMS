@@ -28,7 +28,7 @@ export const fetchDocuments = async ({ queryKey }) => {
     try {
         const { data } = await axios.get(`${apiUrl}/documents`, config)
         return data
-    } catch (error) { console.log(error) }
+    } catch (error) { throw new Error() }
 }
 export const fetchDocumentsByUser = async ({ queryKey }) => {
     const token = queryKey[1]
@@ -42,7 +42,7 @@ export const fetchDocumentsByUser = async ({ queryKey }) => {
     try {
         const { data } = await axios.get(`${apiUrl}/documents?user_id=${user_id}`, config)
         return data
-    } catch (error) { console.log(error) }
+    } catch (error) { throw new Error() }
 }
 
 export const fetchDocument = async ({ queryKey }) => {
@@ -57,7 +57,24 @@ export const fetchDocument = async ({ queryKey }) => {
     try {
         const { data } = await axios.get(`${apiUrl}/documents/${id}`, config)
         return data
-    } catch (error) { console.log(error) }
+    } catch (error) { throw new Error() }
+
+}
+export const downloadDocument = async ({ queryKey }) => {
+    const token = queryKey[1]
+    const id = queryKey[2]
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+    };
+    try {
+        const { data } = await axios.get(`${apiUrl}/documents/${id}/download`, config)
+        const url = window.URL.createObjectURL(new Blob([data]));
+        console.log(url)
+        return url
+    } catch (error) { throw new Error() }
 
 }
 
@@ -70,7 +87,7 @@ export const updateDocument = async ({ document, token, id }) => {
     };
     try {
         await axios.put(`${apiUrl}/documents/${id}`, document, config)
-    } catch (error) { console.log(error) }
+    } catch (error) { throw new Error() }
 
 }
 
@@ -85,6 +102,6 @@ export const deleteDocument = async ({ token, id }) => {
     try {
         await axios.delete(`${apiUrl}/documents/${id}`, config)
     } catch (error) {
-        console.log(error)
+        throw new Error()
     }
 }
