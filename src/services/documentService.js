@@ -68,12 +68,12 @@ export const downloadDocument = async ({ queryKey }) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
         },
+        responseType: "blob"
     };
     try {
-        const { data } = await axios.get(`${apiUrl}/documents/${id}/download`, config)
+        const { data, headers } = await axios.get(`${apiUrl}/documents/${id}/download`, config)
         const url = window.URL.createObjectURL(new Blob([data]));
-        console.log(url)
-        return url
+        return { url, filename: headers['X-Suggested-Filename'] ?? headers['x-suggested-filename'] }
     } catch (error) { throw new Error() }
 
 }

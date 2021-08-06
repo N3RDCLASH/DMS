@@ -73,7 +73,14 @@ function Documents() {
     const downloadFile = (id) => {
         setDocumentID(id);
         refetchDownload()
-        return downloadedFile;
+        const link = document.createElement('a');
+        if (downloadedFile) {
+            console.log(downloadedFile)
+            link.href = downloadedFile.url;
+            link.setAttribute('download', downloadedFile.filename);
+            document.body.appendChild(link);
+            link.click();
+        }
     }
 
     return (
@@ -217,6 +224,7 @@ function Documents() {
                                                     </TableCell>
                                                 </TableRow> :
                                                 data && data.map((document) =>
+                                                    document &&
                                                     <TableRow key={document?.id}>
                                                         <TableCell>
                                                             {document?.id}
