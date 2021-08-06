@@ -420,7 +420,7 @@ const Users = () => {
                     >
                     </Box>
                     <Button
-                        color="primary" type="submit" contained>
+                        color="primary" type="submit" variant="contained">
                         Submit
                     </Button>
                 </form>
