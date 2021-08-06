@@ -7,7 +7,7 @@ const useStyles = makeStyles(componentStyles);
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="down" ref={ref} {...props} />;
 });
-function ModalForm({ handleClose, children, open, submit }) {
+function ModalForm({ handleClose, children, open, submit, headerText }) {
     const classes = useStyles()
     return (
         <div>
@@ -25,7 +25,7 @@ function ModalForm({ handleClose, children, open, submit }) {
                         component="h5"
                         className={classes.dialogTitle}
                     >
-                        New message to undefined
+                        {headerText ?? "Form"}
                     </Typography>
                     <IconButton onClick={handleClose}>
                         <Clear />
