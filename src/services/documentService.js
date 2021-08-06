@@ -60,9 +60,8 @@ export const fetchDocument = async ({ queryKey }) => {
     } catch (error) { throw new Error() }
 
 }
-export const downloadDocument = async ({ queryKey }) => {
-    const token = queryKey[1]
-    const id = queryKey[2]
+export const downloadDocument = async ({ token, id }) => {
+
     const config = {
         headers: {
             "Content-Type": "application/json",

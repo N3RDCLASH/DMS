@@ -15,6 +15,7 @@ import { DropzoneDialog } from 'components/StyledDropzone/DropzoneDialog';
 import { deleteDocument } from 'services/documentService';
 import Swal from 'sweetalert2';
 import { downloadDocument } from 'services/documentService';
+// import { Alert, AlertTitle } from '@material-ui/lab';
 
 
 
@@ -23,14 +24,22 @@ function Documents() {
     const dashboardStyles = makeStyles(componentStyles1);
     const classes = dashboardStyles()
     const user = useSelector((state) => state.userLogin.userInfo);
-    const { isLoading, isError, data, error, refetch } = useQuery(['documents', user?.token, user?.id], fetchDocumentsByUser);
-    const { data: downloadedFile, refetch: refetchDownload } = useQuery(['documentDownload', user?.token, documentID], downloadDocument, { enabled: false });
+    const { isLoading, isError, data, error, refetch, isSuccess } = useQuery(['documents', user?.token, user?.id], fetchDocumentsByUser);
 
     const override = css`
-  display: block;
-  margin: 0 auto;
-  border-color: #5e72e4;
-`;
+    display: block;
+    margin: 0 auto;
+    border-color: #5e72e4;
+    `;
+    const swalConfig = {
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+    }
     const [open, setOpen] = React.useState(false);
 
     const handleClickOpen = () => {
@@ -43,15 +52,7 @@ function Documents() {
 
     const deleteMutation = useMutation(deleteDocument)
     const handleDelete = (id) => {
-        Swal.fire({
-            title: "Are you sure?",
-            text: "You won't be able to revert this!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!",
-        }).then((result) => {
+        Swal.fire(swalConfig).then((result) => {
             if (result.isConfirmed) {
                 deleteMutation.mutate(
                     { token: user?.token, id },
@@ -70,18 +71,26 @@ function Documents() {
             }
         });
     }
+    const downloadMutation = useMutation(downloadDocument);
     const downloadFile = (id) => {
-        setDocumentID(id);
-        refetchDownload()
-        const link = document.createElement('a');
-        if (downloadedFile) {
-            console.log(downloadedFile)
-            link.href = downloadedFile.url;
-            link.setAttribute('download', downloadedFile.filename);
-            document.body.appendChild(link);
-            link.click();
-        }
+        downloadMutation.mutate({ token: user?.token, id }, {
+            onSuccess: data => {
+                console.log(data)
+                const link = document.createElement('a')
+                link.href = data.url;
+                link.setAttribute('download', data.filename);
+                document.body.appendChild(link);
+                link.click();
+            }
+            // document.body.removeChild(link)
+
+        })
     }
+    const saveDocument = (downloadedFile) => {
+
+    }
+
+
 
     return (
         <>
@@ -216,14 +225,14 @@ function Documents() {
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
-                                            {isLoading ?
+                                            {isLoading && !isSuccess ?
                                                 <TableRow>
                                                     <TableCell colSpan={4}>
                                                         <ClipLoader loading={isLoading} css={override} size={60} />
 
                                                     </TableCell>
                                                 </TableRow> :
-                                                data && data.map((document) =>
+                                                isSuccess && data && data.map((document) =>
                                                     document &&
                                                     <TableRow key={document?.id}>
                                                         <TableCell>
@@ -246,7 +255,7 @@ function Documents() {
                                                             {user?.firstname + ' ' + user?.lastname}
                                                         </TableCell>
                                                         <TableCell classes={{ root: classes.tableCellRoot }}>
-                                                            {document?.updated_at}
+                                                            {Date(document?.updated_at) ?? Date(document?.created_at)}
                                                         </TableCell>
                                                         <Box
                                                             component={TableCell}
@@ -258,11 +267,11 @@ function Documents() {
                                                         </Box>
                                                         <TableCell style={{ display: "flex", justifyContent: "space-evenly" }}>
 
-                                                            <Link to={"users/" + document?.id} style={{ margin: "0 5px" }} >
+                                                            <Link to={"documents/" + document?.id} style={{ margin: "0 5px" }} >
                                                                 <Visibility style={{ color: green[500] }}></Visibility>
                                                             </Link>
-                                                            <Delete style={{ color: red[500], margin: "0 5px", cursor: "pointer" }} onClick={() => handleDelete(document?.id)}></Delete>
-                                                            <CloudDownload style={{ color: yellow[500], margin: "0 5px", cursor: "pointer" }} onClick={() => downloadFile(document?.id)} ></CloudDownload>
+                                                            <Delete style={{ color: red[500], margin: "0 5px", cursor: "pointer" }} onClick={() => handleDelete(document.id)}></Delete>
+                                                            <CloudDownload style={{ color: yellow[500], margin: "0 5px", cursor: "pointer" }} onClick={() => downloadFile(document.id)} ></CloudDownload>
 
                                                         </TableCell>
                                                     </TableRow>
