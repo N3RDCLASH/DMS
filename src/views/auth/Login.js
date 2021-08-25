@@ -27,6 +27,7 @@ import { login } from "actions/userActions";
 import { css } from "@emotion/react";
 import { useHistory } from "react-router-dom";
 import { Alert } from "@material-ui/lab";
+import { Visibility, VisibilityOff } from "@material-ui/icons";
 // import { useIsAuthtenticated } from "hooks/useIsAuthenticated";
 // import { Redirect } from "react-router-dom";
 const useStyles = makeStyles(componentStyles);
@@ -38,6 +39,7 @@ function Login() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const dispatch = useDispatch()
   const userLogin = useSelector((state) => state.userLogin);
@@ -114,13 +116,18 @@ function Login() {
                 >
                   <FilledInput
                     autoComplete="off"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="Password"
                     onInput={({ target: { value } }) => setPassword(value)}
                     required
                     startAdornment={
                       <InputAdornment position="start">
                         <Lock />
+                      </InputAdornment>
+                    }
+                    endAdornment={
+                      <InputAdornment position="start" style={{ cursor: "pointer" }} onClick={() => setShowPassword(!showPassword)} >
+                        {showPassword ? <Visibility /> : <VisibilityOff />}
                       </InputAdornment>
                     }
                   />
