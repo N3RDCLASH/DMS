@@ -29,6 +29,7 @@ import { InsertDriveFile, Security } from "@material-ui/icons";
 import SinglePermission from "views/admin/Permissions/SinglePermission";
 import Permissions from "views/admin/Permissions/Permissions";
 import Documents from "views/admin/Documents/Documents";
+import SingleDocument from "views/admin/Documents/SingleDocument";
 
 var routes = [
 
@@ -96,7 +97,15 @@ var routes = [
     iconColor: "ErrorLight",
     component: Documents,
     layout: "/app",
-    sidebar: true
+    sidebar: true,
+    exact: true
+  }, 
+  {
+    path: "/documents/:id",
+    name: "Single Document",
+    iconColor: "PrimaryLight",
+    component: SingleDocument,
+    layout: "/app",
   },
   {
     path: "/users",
