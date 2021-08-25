@@ -135,7 +135,7 @@ function Login() {
                 <FormControlLabel
                   value="end"
                   control={<Checkbox color="primary" />}
-                  label="Remeber me"
+                  label="Remember me"
                   labelPlacement="end"
                   classes={{
                     root: classes.formControlLabelRoot,
