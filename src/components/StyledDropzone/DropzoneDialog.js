@@ -102,7 +102,7 @@ export function DropzoneDialog(props) {
         isDragAccept,
         isDragReject
     } = useDropzone({
-        accept: 'image/*',
+        accept: ['image/*', 'application/pdf'],
         onDrop: acceptedFiles => {
             if (acceptedFiles.length > 1)
                 return
