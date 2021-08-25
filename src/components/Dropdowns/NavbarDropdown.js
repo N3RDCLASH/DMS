@@ -11,14 +11,12 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Typography from "@material-ui/core/Typography";
 // @material-ui/icons components
 import DirectionsRun from "@material-ui/icons/DirectionsRun";
-import EventNote from "@material-ui/icons/EventNote";
-import LiveHelp from "@material-ui/icons/LiveHelp";
+
 import Person from "@material-ui/icons/Person";
-import Settings from "@material-ui/icons/Settings";
 
 // core components
 import componentStyles from "assets/theme/components/navbar-dropdown.js";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "actions/userActions";
 
 const useStyles = makeStyles(componentStyles);
@@ -37,6 +35,7 @@ export default function NavbarDropdown() {
     setAnchorEl(null);
   };
   const dispatch = useDispatch()
+  const user = useSelector(state => state.userLogin.userInfo)
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
@@ -69,48 +68,7 @@ export default function NavbarDropdown() {
         />
         <span>My profile</span>
       </Box>
-      <Box
-        display="flex!important"
-        alignItems="center!important"
-        component={MenuItem}
-        onClick={handleMenuClose}
-      >
-        <Box
-          component={Settings}
-          width="1.25rem!important"
-          height="1.25rem!important"
-          marginRight="1rem"
-        />
-        <span>Settings</span>
-      </Box>
-      <Box
-        display="flex!important"
-        alignItems="center!important"
-        component={MenuItem}
-        onClick={handleMenuClose}
-      >
-        <Box
-          component={EventNote}
-          width="1.25rem!important"
-          height="1.25rem!important"
-          marginRight="1rem"
-        />
-        <span>Activity</span>
-      </Box>
-      <Box
-        display="flex!important"
-        alignItems="center!important"
-        component={MenuItem}
-        onClick={handleMenuClose}
-      >
-        <Box
-          component={LiveHelp}
-          width="1.25rem!important"
-          height="1.25rem!important"
-          marginRight="1rem"
-        />
-        <span>Support</span>
-      </Box>
+
       <Divider component="div" classes={{ root: classes.dividerRoot }} />
       <Box
         display="flex!important"
@@ -153,7 +111,7 @@ export default function NavbarDropdown() {
             root: classes.avatarRoot,
           }}
         />
-        <Hidden smDown>Jessica Jones</Hidden>
+        <Hidden smDown>{user?.firstname + " " + user?.lastname}</Hidden>
       </Button>
       {renderMenu}
     </>
