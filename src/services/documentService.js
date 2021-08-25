@@ -72,7 +72,7 @@ export const downloadDocument = async ({ token, id }) => {
     try {
         const { data, headers } = await axios.get(`${apiUrl}/documents/${id}/download`, config)
         const url = window.URL.createObjectURL(new Blob([data]));
-        return { url, filename: headers['X-Suggested-Filename'] ?? headers['x-suggested-filename'] }
+        return { url, filename: headers['X-Suggested-Filename'] ?? headers['x-suggested-filename'], fileType: headers['content-type']??'' }
     } catch (error) { throw new Error() }
 
 }
