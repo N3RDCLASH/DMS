@@ -83,7 +83,22 @@ export const addRoleToUser = async ({ role, token, id }) => {
 
     try {
 
-        await axios.post(`${apiUrl}/users/${id}`, role, config)
+        await axios.post(`${apiUrl}/users/${id}/roles`, role, config)
+    } catch (error) {
+        throw new Error()
+    }
+}
+export const addRolesToUser = async ({ roles, token, id }) => {
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+    };
+
+    try {
+
+        await axios.post(`${apiUrl}/users/${id}/roles/multi`, roles, config)
     } catch (error) {
         throw new Error()
     }

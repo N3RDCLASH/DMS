@@ -15,12 +15,10 @@ import AuthLayout from "layouts/Auth.js";
 
 import { ProtectedContainer } from 'components/ProtectedContainer/ProtectedContainer'
 import {
-    // useQuery,
-    // useMutation,
-    // useQueryClient,
     QueryClient,
     QueryClientProvider,
 } from 'react-query'
+import PermissionProvider from "provider/permissionProvider";
 
 
 
@@ -34,7 +32,7 @@ const App = () => {
     });
     return (
         <QueryClientProvider client={queryClient}>
-
+            <PermissionProvider>
             <ThemeProvider theme={theme}>
                 {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
                 <CssBaseline />
@@ -47,6 +45,7 @@ const App = () => {
                     </Switch>
                 </BrowserRouter>
             </ThemeProvider>
+            </PermissionProvider>
         </QueryClientProvider>
     )
 }

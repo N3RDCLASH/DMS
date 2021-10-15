@@ -15,12 +15,16 @@ import { fetchRole } from 'services/roleService';
 import { red } from '@material-ui/core/colors';
 import Swal from "sweetalert2";
 import { removePermissionFromRole } from 'services/roleService';
+import ModalForm from 'components/ModalForm/ModalForm';
+import CheckBoxForm from 'components/CheckBoxForm/CheckBoxForm';
+import { fetchPermissions } from 'services/permissionService';
 
 const SingleRole = () => {
 
     const useStyles = makeStyles(componentStyles);
     const classes = useStyles();
     const [editable, setEditable] = useState(false);
+    const [permissionModalOpen, setPermissionModalOpen] = useState(false);
     const [permissionEditable, setPermissionEditable] = useState(false);
     let { id } = useParams();
 
@@ -29,7 +33,10 @@ const SingleRole = () => {
 
     // queries
     const { isLoading, isError, data, error, refetch } = useQuery(['role', user?.token, id], fetchRole);
-
+    const { data: permissions } = useQuery(
+        ["permissions", user?.token],
+        fetchPermissions
+    );
     const roleUpdateMutation = useMutation(updateRole, {
         onSuccess: () => {
         }
@@ -51,7 +58,7 @@ const SingleRole = () => {
             toast.addEventListener('mouseleave', Swal.resumeTimer)
         }
     })
-
+    const handleClose = () => { setPermissionModalOpen(false) }
     const handlePermissionDelete = (permission_id) => {
         Swal.fire({
             title: "Are you sure?",
@@ -338,7 +345,10 @@ const SingleRole = () => {
                                     </Box>
                                     <TableFooter style={{ display: "flex", justifyContent: "flex-end" }}>
                                         <Button variant="contained"
-                                            color="primary" style={{ justifySelf: "flex-end", marginTop: "1em" }} disabled={!permissionEditable}>
+                                            onClick={() => setPermissionModalOpen(!permissionModalOpen)}
+                                            color="primary"
+                                            style={{ justifySelf: "flex-end", marginTop: "1em" }}
+                                            disabled={!permissionEditable} >
                                             <Add />
                                         </Button>
                                     </TableFooter>
@@ -348,6 +358,9 @@ const SingleRole = () => {
                     </Grid>
                 </Grid>
             </Container>
+            <ModalForm headerText="Permissions" open={permissionModalOpen} handleClose={handleClose}>
+                <CheckBoxForm items={permissions} initialValues={data?.permissions}></CheckBoxForm>
+            </ModalForm>
         </div >
     )
 }

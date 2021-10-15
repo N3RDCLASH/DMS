@@ -20,12 +20,15 @@ import NavbarDropdown from "components/Dropdowns/NavbarDropdown.js";
 import routes from "routes.js";
 
 import componentStyles from "assets/theme/layouts/admin.js";
+import useHasPermission from "hooks/useHasPermission";
 
 const useStyles = makeStyles(componentStyles);
-
 const Admin = () => {
   const classes = useStyles();
   const location = useLocation();
+  // const [permission, setPermission] = useState()
+  const [hasPermission] = useHasPermission()
+
 
   React.useEffect(() => {
     document.documentElement.scrollTop = 0;
@@ -36,14 +39,16 @@ const Admin = () => {
   const getRoutes = (routes) => {
     return routes.map((prop, key) => {
       if (prop.layout === "/app") {
-        return (
-          <Route
-            path={prop.layout + prop.path}
-            component={prop.component}
-            key={key}
-            exact={prop.exact ? true : false}
-          />
-        );
+        if (prop.permission && hasPermission(prop.permission) || !prop.permission)
+          return (
+            <Route
+              path={prop.layout + prop.path}
+              component={prop.component}
+              key={key}
+              exact={prop.exact ? true : false}
+            />
+          );
+
       } else {
         return null;
       }
@@ -63,7 +68,7 @@ const Admin = () => {
     <>
       <>
         <Sidebar
-          routes={routes.filter(x => x.sidebar == true)}
+          routes={routes.filter(route => route.sidebar == true && (route.permission && hasPermission(route.permission) || !route.permission))}
           logo={{
             innerLink: "/app/home",
             imgSrc: require("../assets/img/brand/argon-react.png").default,

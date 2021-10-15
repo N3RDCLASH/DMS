@@ -30,18 +30,11 @@ import SinglePermission from "views/admin/Permissions/SinglePermission";
 import Permissions from "views/admin/Permissions/Permissions";
 import Documents from "views/admin/Documents/Documents";
 import SingleDocument from "views/admin/Documents/SingleDocument";
+import { READ_DOCUMENTS } from "constants/permissionConstants";
+import { READ_USER } from "constants/permissionConstants";
+import { READ_ROLES } from "constants/permissionConstants";
 
 var routes = [
-
-  {
-    path: "/home",
-    name: "Dashboard",
-    icon: Tv,
-    iconColor: "PrimaryLight",
-    component: Dashboard,
-    layout: "/app",
-    sidebar: true
-  },
   // {
   //   path: "/icons",
   //   name: "Icons",
@@ -58,14 +51,6 @@ var routes = [
   //   component: Maps,
   //   layout: "/app",
   // },
-  {
-    path: "/profile",
-    name: "User Profile",
-    icon: Person,
-    iconColor: "ErrorLight",
-    component: Profile,
-    layout: "/app",
-  },
   // {
   //   path: "/tables",
   //   name: "Tables",
@@ -74,14 +59,6 @@ var routes = [
   //   component: Tables,
   //   layout: "/app",
   // },
-  {
-    path: "/login",
-    name: "Login",
-    icon: VpnKey,
-    iconColor: "Info",
-    component: Login,
-    layout: "/auth",
-  },
   // {
   //   path: "/register",
   //   name: "Register",
@@ -90,6 +67,32 @@ var routes = [
   //   component: Register,
   //   layout: "/auth",
   // },
+
+  {
+    path: "/home",
+    name: "Dashboard",
+    icon: Tv,
+    iconColor: "PrimaryLight",
+    component: Dashboard,
+    layout: "/app",
+    sidebar: true
+  },
+  {
+    path: "/profile",
+    name: "User Profile",
+    icon: Person,
+    iconColor: "ErrorLight",
+    component: Profile,
+    layout: "/app",
+  },
+  {
+    path: "/login",
+    name: "Login",
+    icon: VpnKey,
+    iconColor: "Info",
+    component: Login,
+    layout: "/auth",
+  },
   {
     path: "/documents",
     name: "Documents",
@@ -98,14 +101,16 @@ var routes = [
     component: Documents,
     layout: "/app",
     sidebar: true,
-    exact: true
-  }, 
+    exact: true,
+    permission: READ_DOCUMENTS
+  },
   {
     path: "/documents/:id",
     name: "Single Document",
     iconColor: "PrimaryLight",
     component: SingleDocument,
     layout: "/app",
+    permission: READ_DOCUMENTS
   },
   {
     path: "/users",
@@ -115,7 +120,8 @@ var routes = [
     component: Users,
     layout: "/app",
     sidebar: true,
-    exact: true
+    exact: true,
+    permission: READ_USER
   },
   {
     path: "/users/:id",
@@ -123,6 +129,7 @@ var routes = [
     iconColor: "ErrorLight",
     component: SingleUser,
     layout: "/app",
+    permission: READ_USER
     // sidebar: true
   },
   {
@@ -133,7 +140,8 @@ var routes = [
     component: Roles,
     layout: "/app",
     sidebar: true,
-    exact: true
+    exact: true,
+    permission: READ_ROLES
   },
   {
     path: "/roles/:id",
@@ -141,6 +149,7 @@ var routes = [
     iconColor: "ErrorLight",
     component: SingleRole,
     layout: "/app",
+    permission: READ_ROLES
   },
   {
     path: "/permissions",
@@ -150,7 +159,8 @@ var routes = [
     component: Permissions,
     layout: "/app",
     sidebar: true,
-    exact: true
+    exact: true,
+    // permission: READ_PERMISSION
   },
   {
     path: "/permissions/:id",

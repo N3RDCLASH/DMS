@@ -37,14 +37,20 @@ import { css } from "@emotion/react";
 import { red } from "@material-ui/core/colors";
 import Swal from "sweetalert2";
 import { removeRoleFromUser } from "services/userService";
+import ModalForm from "components/ModalForm/ModalForm";
+import useHasPermission from "hooks/useHasPermission";
+import CheckBoxForm from "components/CheckBoxForm/CheckBoxForm";
+import { fetchRoles } from "services/roleService";
+import { addRolesToUser } from "services/userService";
 
 const SingleUser = () => {
     const useStyles = makeStyles(componentStyles);
     const classes = useStyles();
     const [roleEditable, setRoleEditable] = useState(false);
     const [editable, setEditable] = useState(false);
+    const [roleModalOpen, setRoleModalOpen] = useState(false)
     let { id } = useParams();
-
+    const hasPermission = useHasPermission()
     const {
         register,
         handleSubmit,
@@ -57,6 +63,10 @@ const SingleUser = () => {
     const { isLoading, isError, data, error, refetch } = useQuery(
         ["users", user?.token, id],
         fetchUser
+    );
+    const { data: roles } = useQuery(
+        ["roles", user?.token],
+        fetchRoles
     );
     const userUpdateMutation = useMutation(updateUser, {
         onSuccess: () => {
@@ -73,7 +83,7 @@ const SingleUser = () => {
             });
         }
     });
-
+    const addRolesMutation = useMutation(addRolesToUser)
     const roleRemoveMutation = useMutation(removeRoleFromUser, {
         onSuccess: () => { },
         onError: (error) => {
@@ -96,13 +106,17 @@ const SingleUser = () => {
     margin: 0 auto;
     border-color: #5e72e4;
   `;
+    const handleClose = () => { setRoleModalOpen(false) }
 
     // form submission
     const onSubmit = (data) => {
         console.log(data);
         userUpdateMutation.mutate({ user: data, token: user?.token, id });
     };
-    const handleRoleDelete = (role_id) => {
+    const handleAddRoles = (roles) => {
+        addRolesMutation.mutate({ roles, token: user?.token, id }, { onError: () => { } })
+    }
+    const handleDeleteRole = (role_id) => {
         Swal.fire({
             title: "Are you sure?",
             text: "You won't be able to revert this!",
@@ -118,6 +132,7 @@ const SingleUser = () => {
                     {
                         onSuccess: () => {
                             Swal.fire("Deleted!", "Role has been deleted.", "success");
+                            refetch()
                         },
                         onError: () =>
                             Swal.fire("Failed!", "Role has not been deleted.", "error"),
@@ -128,189 +143,187 @@ const SingleUser = () => {
     };
 
     return (
-        <div>
-            <StandardHeader classes={classes.bgGradientError}>
-                <Link to="/app/users">
-                    <ArrowBack
-                        style={{ width: 30, height: "auto", color: "white" }}
-                    ></ArrowBack>
-                </Link>
-            </StandardHeader>
+        <>
+            <div>
+                <StandardHeader classes={classes.bgGradientError}>
+                    <Link to="/app/users">
+                        <ArrowBack
+                            style={{ width: 30, height: "auto", color: "white" }}
+                        ></ArrowBack>
+                    </Link>
+                </StandardHeader>
 
-            <Container
-                maxWidth={false}
-                component={Box}
-                marginTop="-6rem"
-                classes={{ root: classes.containerRoot }}
-            >
-                <Grid container>
-                    <Grid
-                        item
-                        xs={12}
-                        xl={8}
-                        component={Box}
-                        marginBottom="3rem!important"
-                        classes={{ root: classes.gridItemRoot }}
-                    >
-                        <Card>
-                            <CardHeader
-                                subheader={
-                                    <Grid
-                                        container
-                                        component={Box}
-                                        alignItems="center"
-                                        justifyContent="space-between"
-                                    >
-                                        <Grid item xs="auto">
-                                            <Box
-                                                component={Typography}
-                                                variant="h3"
-                                                marginBottom="0!important"
-                                            >
-                                                User
-                                            </Box>
-                                        </Grid>
-                                        <Grid item xs="auto">
-                                            <Box
-                                                justifyContent="flex-end"
-                                                display="flex"
-                                                flexWrap="wrap"
-                                            >
-                                                <Button
-                                                    variant="contained"
-                                                    color="primary"
-                                                    size="small"
-                                                    className="btn-icon btn-3"
-                                                    onClick={() => setEditable(!editable)}
+                <Container
+                    maxWidth={false}
+                    component={Box}
+                    marginTop="-6rem"
+                    classes={{ root: classes.containerRoot }}
+                >
+                    <Grid container>
+                        <Grid
+                            item
+                            xs={12}
+                            xl={8}
+                            component={Box}
+                            marginBottom="3rem!important"
+                            classes={{ root: classes.gridItemRoot }}
+                        >
+                            <Card>
+                                <CardHeader
+                                    subheader={
+                                        <Grid
+                                            container
+                                            component={Box}
+                                            alignItems="center"
+                                            justifyContent="space-between"
+                                        >
+                                            <Grid item xs="auto">
+                                                <Box
+                                                    component={Typography}
+                                                    variant="h3"
+                                                    marginBottom="0!important"
                                                 >
-                                                    <Box
-                                                        component={Create}
-                                                        marginRight=".75em"
-                                                        top="2px"
-                                                        position="relative"
-                                                    />
-                                                    {/* <span className="btn-inner--icon">
-                                                        <i className="ni ni-bag-17" />
-                                                    </span> */}
-                                                    Edit
-                                                </Button>
-                                            </Box>
-                                        </Grid>
-                                    </Grid>
-                                }
-                                classes={{ root: classes.cardHeaderRoot }}
-                            ></CardHeader>
-                            <CardContent>
-                                {isLoading ? (
-                                    <ClipLoader loading={isLoading} css={override} size={60} />
-                                ) : (
-                                    <form action="" onSubmit={handleSubmit(onSubmit)}>
-                                        <Grid container>
-                                            <Grid item xs={12} lg={6}>
-                                                <FormControl
-                                                    variant="filled"
-                                                    component={Box}
-                                                    width="100%"
-                                                    marginBottom="1rem!important"
-                                                >
-                                                    <FilledInput
-                                                        autoComplete="off"
-                                                        type="text"
-                                                        placeholder="First Name"
-                                                        {...register("firstname")}
-                                                        onInput={({ target: { value } }) => value}
-                                                        required
-                                                        readOnly={!editable}
-                                                        defaultValue={"" + data?.firstname}
-                                                        autoFocus
-                                                        startAdornment={
-                                                            <InputAdornment position="start">
-                                                                <AccountCircle />
-                                                            </InputAdornment>
-                                                        }
-                                                    />
-                                                </FormControl>
+                                                    User
+                                                </Box>
                                             </Grid>
-                                            <Grid item xs={12} lg={6}>
-                                                <FormControl
-                                                    variant="filled"
-                                                    component={Box}
-                                                    width="100%"
-                                                    marginBottom="1rem!important"
+                                            <Grid item xs="auto">
+                                                <Box
+                                                    justifyContent="flex-end"
+                                                    display="flex"
+                                                    flexWrap="wrap"
                                                 >
-                                                    <FilledInput
-                                                        autoComplete="off"
-                                                        type="text"
-                                                        placeholder="Last Name"
-                                                        {...register("lastname")}
-                                                        onInput={({ target: { value } }) => value}
-                                                        required
-                                                        readOnly={!editable}
-                                                        defaultValue={"" + data?.lastname}
-                                                        autoFocus
-                                                        startAdornment={
-                                                            <InputAdornment position="start">
-                                                                <AccountCircle />
-                                                            </InputAdornment>
-                                                        }
-                                                    />
-                                                </FormControl>
+                                                    <Button
+                                                        variant="contained"
+                                                        color="primary"
+                                                        size="small"
+                                                        className="btn-icon btn-3"
+                                                        onClick={() => setEditable(!editable)}
+                                                    >
+                                                        <Box
+                                                            component={Create}
+                                                            marginRight=".75em"
+                                                            top="2px"
+                                                            position="relative"
+                                                        />
+                                                        Edit
+                                                    </Button>
+                                                </Box>
                                             </Grid>
                                         </Grid>
+                                    }
+                                    classes={{ root: classes.cardHeaderRoot }}
+                                ></CardHeader>
+                                <CardContent>
+                                    {isLoading ? (
+                                        <ClipLoader loading={isLoading} css={override} size={60} />
+                                    ) : (
+                                        <form action="" onSubmit={handleSubmit(onSubmit)}>
+                                            <Grid container>
+                                                <Grid item xs={12} lg={6}>
+                                                    <FormControl
+                                                        variant="filled"
+                                                        component={Box}
+                                                        width="100%"
+                                                        marginBottom="1rem!important"
+                                                    >
+                                                        <FilledInput
+                                                            autoComplete="off"
+                                                            type="text"
+                                                            placeholder="First Name"
+                                                            {...register("firstname")}
+                                                            onInput={({ target: { value } }) => value}
+                                                            required
+                                                            readOnly={!editable}
+                                                            defaultValue={"" + data?.firstname}
+                                                            autoFocus
+                                                            startAdornment={
+                                                                <InputAdornment position="start">
+                                                                    <AccountCircle />
+                                                                </InputAdornment>
+                                                            }
+                                                        />
+                                                    </FormControl>
+                                                </Grid>
+                                                <Grid item xs={12} lg={6}>
+                                                    <FormControl
+                                                        variant="filled"
+                                                        component={Box}
+                                                        width="100%"
+                                                        marginBottom="1rem!important"
+                                                    >
+                                                        <FilledInput
+                                                            autoComplete="off"
+                                                            type="text"
+                                                            placeholder="Last Name"
+                                                            {...register("lastname")}
+                                                            onInput={({ target: { value } }) => value}
+                                                            required
+                                                            readOnly={!editable}
+                                                            defaultValue={"" + data?.lastname}
+                                                            autoFocus
+                                                            startAdornment={
+                                                                <InputAdornment position="start">
+                                                                    <AccountCircle />
+                                                                </InputAdornment>
+                                                            }
+                                                        />
+                                                    </FormControl>
+                                                </Grid>
+                                            </Grid>
 
-                                        <FormControl
-                                            variant="filled"
-                                            component={Box}
-                                            width="100%"
-                                            marginBottom="1rem!important"
-                                        >
-                                            <FilledInput
-                                                autoComplete="off"
-                                                type="text"
-                                                placeholder="Username"
-                                                {...register("username")}
-                                                onInput={({ target: { value } }) => value}
-                                                required
-                                                readOnly={!editable}
-                                                defaultValue={"" + data?.username}
-                                                autoFocus
-                                                startAdornment={
-                                                    <InputAdornment position="start">
-                                                        <AccountCircle />
-                                                    </InputAdornment>
-                                                }
-                                            />
-                                        </FormControl>
-                                        <FormControl
-                                            variant="filled"
-                                            component={Box}
-                                            width="100%"
-                                            marginBottom="1rem!important"
-                                        >
-                                            <FilledInput
-                                                autoComplete="off"
-                                                type="text"
-                                                placeholder="Email"
-                                                {...register("email")}
-                                                onInput={({ target: { value } }) => value}
-                                                required
-                                                disabled
-                                                defaultValue={"" + data?.email}
-                                                autoFocus
-                                                startAdornment={
-                                                    <InputAdornment position="start">
-                                                        <Email />
-                                                    </InputAdornment>
-                                                }
-                                            />
-                                        </FormControl>
-                                        {/* Todo: put this in seperate form */}
-                                        {/* <FormControl
+                                            <FormControl
+                                                variant="filled"
+                                                component={Box}
+                                                width="100%"
+                                                marginBottom="1rem!important"
+                                            >
+                                                <FilledInput
+                                                    autoComplete="off"
+                                                    type="text"
+                                                    placeholder="Username"
+                                                    {...register("username")}
+                                                    onInput={({ target: { value } }) => value}
+                                                    required
+                                                    readOnly={!editable}
+                                                    defaultValue={"" + data?.username}
+                                                    autoFocus
+                                                    startAdornment={
+                                                        <InputAdornment position="start">
+                                                            <AccountCircle />
+                                                        </InputAdornment>
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormControl
+                                                variant="filled"
+                                                component={Box}
+                                                width="100%"
+                                                marginBottom="1rem!important"
+                                            >
+                                                <FilledInput
+                                                    autoComplete="off"
+                                                    type="text"
+                                                    placeholder="Email"
+                                                    {...register("email")}
+                                                    onInput={({ target: { value } }) => value}
+                                                    required
+                                                    disabled
+                                                    defaultValue={"" + data?.email}
+                                                    autoFocus
+                                                    startAdornment={
+                                                        <InputAdornment position="start">
+                                                            <Email />
+                                                        </InputAdornment>
+                                                    }
+                                                />
+                                            </FormControl>
+                                            {/* Todo: put this in seperate form */}
+                                            {/* <FormControl
                                         variant="filled"
                                         component={Box}
                                         width="100%"
                                         marginBottom="1rem!important"
-                                    >
+                                        >
                                         <FilledInput
                                         autoComplete="off"
                                             type="text"
@@ -320,191 +333,196 @@ const SingleUser = () => {
                                             readOnly={!editable}
                                             startAdornment={
                                                 <InputAdornment position="start">
-                                                    <Lock />
+                                                <Lock />
                                                     </InputAdornment>
                                             }
                                             />
                                         </FormControl> */}
-                                        <Box
-                                            textAlign="center"
-                                            marginTop="1.5rem"
-                                            marginBottom="1.5rem"
-                                        >
-                                            <Button
-                                                disabled={!editable}
-                                                type="submit"
-                                                color="primary"
-                                                variant="contained"
-                                            >
-                                                Update
-                                            </Button>
-                                        </Box>
-                                    </form>
-                                )}
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                    <Grid
-                        item
-                        xs={12}
-                        xl={4}
-                        component={Box}
-                        marginBottom="3rem!important"
-                        classes={{ root: classes.gridItemRoot }}
-                    >
-                        <Card>
-                            <CardHeader
-                                subheader={
-                                    <Grid
-                                        container
-                                        component={Box}
-                                        alignItems="center"
-                                        justifyContent="space-between"
-                                    >
-                                        <Grid item xs="auto">
                                             <Box
-                                                component={Typography}
-                                                variant="h3"
-                                                marginBottom="0!important"
-                                            >
-                                                Roles
-                                            </Box>
-                                        </Grid>
-                                        <Grid item xs="auto">
-                                            <Box
-                                                justifyContent="flex-end"
-                                                display="flex"
-                                                flexWrap="wrap"
+                                                textAlign="center"
+                                                marginTop="1.5rem"
+                                                marginBottom="1.5rem"
                                             >
                                                 <Button
-                                                    variant="contained"
+                                                    disabled={!editable}
+                                                    type="submit"
                                                     color="primary"
-                                                    size="small"
-                                                    className="btn-icon btn-3"
-                                                    onClick={() => setRoleEditable(!roleEditable)}
+                                                    variant="contained"
                                                 >
-                                                    <Box
-                                                        component={Create}
-                                                        marginRight=".75em"
-                                                        top="2px"
-                                                        position="relative"
-                                                    />
-                                                    {/* <span className="btn-inner--icon">
-                                                        <i className="ni ni-bag-17" />
-                                                    </span> */}
-                                                    Edit
+                                                    Update
                                                 </Button>
                                             </Box>
-                                        </Grid>
-                                    </Grid>
-                                }
-                                classes={{ root: classes.cardHeaderRoot }}
-                            ></CardHeader>
-                            <CardContent>
-                                <TableContainer>
-                                    <Box
-                                        component={Table}
-                                        alignItems="center"
-                                        marginBottom="0!important"
-                                    >
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell
-                                                    classes={{
-                                                        root:
-                                                            classes.tableCellRoot +
-                                                            " " +
-                                                            classes.tableCellRootHead,
-                                                    }}
-                                                >
-                                                    ID
-                                                </TableCell>
-                                                <TableCell
-                                                    classes={{
-                                                        root:
-                                                            classes.tableCellRoot +
-                                                            " " +
-                                                            classes.tableCellRootHead,
-                                                    }}
-                                                >
-                                                    Role
-                                                </TableCell>
-                                                <TableCell
-                                                    classes={{
-                                                        root:
-                                                            classes.tableCellRoot +
-                                                            " " +
-                                                            classes.tableCellRootHead,
-                                                    }}
-                                                ></TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {data?.roles &&
-                                                data?.roles.map((role) => (
-                                                    <TableRow>
-                                                        <TableCell
-                                                            classes={{
-                                                                root:
-                                                                    classes.tableCellRoot +
-                                                                    " " +
-                                                                    classes.tableCellRootHead,
-                                                            }}
-                                                        >
-                                                            {role.id}
-                                                        </TableCell>
-                                                        <TableCell
-                                                            classes={{
-                                                                root:
-                                                                    classes.tableCellRoot +
-                                                                    " " +
-                                                                    classes.tableCellRootHead,
-                                                            }}
-                                                        >
-                                                            {role.name}
-                                                        </TableCell>
-                                                        <TableCell
-                                                            classes={{
-                                                                root:
-                                                                    classes.tableCellRoot +
-                                                                    " " +
-                                                                    classes.tableCellRootHead,
-                                                            }}
-                                                        >
-                                                            {roleEditable && (
-                                                                <Delete
-                                                                    data-id={role.id}
-                                                                    style={{ color: red[500], cursor: "pointer" }}
-                                                                    onClick={() => handleRoleDelete(role.id)}
-                                                                ></Delete>
-                                                            )}
-                                                        </TableCell>
-                                                    </TableRow>
-                                                ))}
-                                        </TableBody>
-                                    </Box>
-                                    <TableFooter
-                                        style={{
-                                            display: "flex",
-                                            justifyContent: "flex-end",
-                                        }}
-                                    >
-                                        <Button
-                                            variant="contained"
-                                            color="primary"
-                                            style={{ justifySelf: "flex-end", marginTop: "1em" }}
-                                            disabled={!roleEditable}
+                                        </form>
+                                    )}
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        <Grid
+                            item
+                            xs={12}
+                            xl={4}
+                            component={Box}
+                            marginBottom="3rem!important"
+                            classes={{ root: classes.gridItemRoot }}
+                        >
+                            <Card>
+                                <CardHeader
+                                    subheader={
+                                        <Grid
+                                            container
+                                            component={Box}
+                                            alignItems="center"
+                                            justifyContent="space-between"
                                         >
-                                            <Add></Add>
-                                        </Button>
-                                    </TableFooter>
-                                </TableContainer>
-                            </CardContent>
-                        </Card>
+                                            <Grid item xs="auto">
+                                                <Box
+                                                    component={Typography}
+                                                    variant="h3"
+                                                    marginBottom="0!important"
+                                                >
+                                                    Roles
+                                                </Box>
+                                            </Grid>
+                                            <Grid item xs="auto">
+                                                <Box
+                                                    justifyContent="flex-end"
+                                                    display="flex"
+                                                    flexWrap="wrap"
+                                                >
+                                                    <Button
+                                                        variant="contained"
+                                                        color="primary"
+                                                        size="small"
+                                                        className="btn-icon btn-3"
+                                                        onClick={() => setRoleEditable(!roleEditable)}
+                                                    >
+                                                        <Box
+                                                            component={Create}
+                                                            marginRight=".75em"
+                                                            top="2px"
+                                                            position="relative"
+                                                        />
+                                                        {/* <span className="btn-inner--icon">
+                                                        <i className="ni ni-bag-17" />
+                                                    </span> */}
+                                                        Edit
+                                                    </Button>
+                                                </Box>
+                                            </Grid>
+                                        </Grid>
+                                    }
+                                    classes={{ root: classes.cardHeaderRoot }}
+                                ></CardHeader>
+                                <CardContent>
+                                    <TableContainer>
+                                        <Box
+                                            component={Table}
+                                            alignItems="center"
+                                            marginBottom="0!important"
+                                        >
+                                            <TableHead>
+                                                <TableRow>
+                                                    <TableCell
+                                                        classes={{
+                                                            root:
+                                                                classes.tableCellRoot +
+                                                                " " +
+                                                                classes.tableCellRootHead,
+                                                        }}
+                                                    >
+                                                        ID
+                                                    </TableCell>
+                                                    <TableCell
+                                                        classes={{
+                                                            root:
+                                                                classes.tableCellRoot +
+                                                                " " +
+                                                                classes.tableCellRootHead,
+                                                        }}
+                                                    >
+                                                        Role
+                                                    </TableCell>
+                                                    <TableCell
+                                                        classes={{
+                                                            root:
+                                                                classes.tableCellRoot +
+                                                                " " +
+                                                                classes.tableCellRootHead,
+                                                        }}
+                                                    ></TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                {data?.roles &&
+                                                    data?.roles.map((role) => (
+                                                        <TableRow key={role.id}>
+                                                            <TableCell
+                                                                classes={{
+                                                                    root:
+                                                                        classes.tableCellRoot +
+                                                                        " " +
+                                                                        classes.tableCellRootHead,
+                                                                }}
+                                                            >
+                                                                {role.id}
+                                                            </TableCell>
+                                                            <TableCell
+                                                                classes={{
+                                                                    root:
+                                                                        classes.tableCellRoot +
+                                                                        " " +
+                                                                        classes.tableCellRootHead,
+                                                                }}
+                                                            >
+                                                                {role.name}
+                                                            </TableCell>
+                                                            <TableCell
+                                                                classes={{
+                                                                    root:
+                                                                        classes.tableCellRoot +
+                                                                        " " +
+                                                                        classes.tableCellRootHead,
+                                                                }}
+                                                            >
+                                                                {roleEditable && (
+                                                                    <Delete
+                                                                        data-id={role.id}
+                                                                        style={{ color: red[500], cursor: "pointer" }}
+                                                                        onClick={() => handleDeleteRole(role.id)}
+                                                                    ></Delete>
+                                                                )}
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    ))}
+                                            </TableBody>
+                                        </Box>
+                                        <TableFooter
+                                            style={{
+                                                display: "flex",
+                                                justifyContent: "flex-end",
+                                            }}
+                                        >
+                                            <Button
+                                                variant="contained"
+                                                color="primary"
+                                                style={{ justifySelf: "flex-end", marginTop: "1em" }}
+                                                disabled={!roleEditable}
+                                                onClick={() => setRoleModalOpen(!roleModalOpen)}
+                                            >
+                                                <Add></Add>
+                                            </Button>
+                                        </TableFooter>
+                                    </TableContainer>
+                                </CardContent>
+                            </Card>
+                        </Grid>
                     </Grid>
-                </Grid>
-            </Container>
-        </div>
+                </Container>
+                < ModalForm headerText="Roles" open={roleModalOpen} handleClose={handleClose} submit={handleAddRoles}>
+                    <CheckBoxForm items={roles} initialValues={data?.roles}></CheckBoxForm>
+                </ModalForm>
+            </div>
+        </>
     );
 };
 

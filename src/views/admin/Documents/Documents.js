@@ -15,6 +15,7 @@ import { DropzoneDialog } from 'components/StyledDropzone/DropzoneDialog';
 import { deleteDocument } from 'services/documentService';
 import Swal from 'sweetalert2';
 import { downloadDocument } from 'services/documentService';
+import { timeParse } from 'd3-time-format';
 // import { Alert, AlertTitle } from '@material-ui/lab';
 
 
@@ -40,6 +41,7 @@ function Documents() {
         cancelButtonColor: "#d33",
         confirmButtonText: "Yes, delete it!",
     }
+    const parseTime = timeParse("%B %d, %Y")
     const [open, setOpen] = React.useState(false);
 
     const handleClickOpen = () => {
@@ -255,7 +257,7 @@ function Documents() {
                                                             {user?.firstname + ' ' + user?.lastname}
                                                         </TableCell>
                                                         <TableCell classes={{ root: classes.tableCellRoot }}>
-                                                            {Date(document?.updated_at) ?? Date(document?.created_at)}
+                                                            {(document?.updated_at) ?? (document?.created_at)}
                                                         </TableCell>
                                                         <Box
                                                             component={TableCell}
